@@ -1,0 +1,8 @@
+[Desktop Entry]
+Encoding=UTF-8
+Version=1.0
+Name=Shutdown headless VBoxes
+Comment=Stops all headlessly running VirtualBox machines
+Type=Application
+Exec=stoprunningVBs
+Icon=shutdown
