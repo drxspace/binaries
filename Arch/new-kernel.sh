@@ -9,7 +9,7 @@
 #
 
 if [[ $EUID -ne 0 ]]; then
-	exec $(which sudo) $0
+	exec $(which sudo) "$0"
 fi
 
 echo -e "\n:: \033[1mAMD Catalyst\033[0m\n"
@@ -22,7 +22,7 @@ echo -e "\n:: \033[1mVirtualBox\033[0m\n"
 dkms install vboxhost/$(pacman -Q virtualbox|awk {'print $2'}|sed 's/\-.\+//') -k $(uname -rm|sed 's/\ /\//')
 dkms install vboxguest/$(pacman -Q virtualbox|awk {'print $2'}|sed 's/\-.\+//') -k $(uname -rm|sed 's/\ /\//')
 
-echo -e "\n:: \033[1mGrub\033[0m\n"
-update-grub
+echo -e "\n:: \033[1mUpdating Grub\033[0m\n"
+update-grub -a
 
 exit $?
