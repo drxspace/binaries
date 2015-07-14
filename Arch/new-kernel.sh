@@ -12,15 +12,21 @@ if [[ $EUID -ne 0 ]]; then
 	exec $(which sudo) "$0"
 fi
 
-echo -e "\n:: \033[1mAMD Catalyst\033[0m\n"
-catalyst_build_module $(uname -r)
+[[ $(which catalyst_build_module 2>/dev/null) ]] && {
+	echo -e "\n:: \033[1mAMD Catalyst\033[0m\n"
+	catalyst_build_module $(uname -r)
+}
 
-echo -e "\n:: \033[1mVMware\033[0m\n"
-vmware-modconfig --console --install-all
+[[ $(which vmware-modconfig 2>/dev/null) ]] && {
+	echo -e "\n:: \033[1mVMware\033[0m\n"
+	vmware-modconfig --console --install-all
+}
 
-echo -e "\n:: \033[1mVirtualBox\033[0m\n"
-dkms install vboxhost/$(pacman -Q virtualbox|awk {'print $2'}|sed 's/\-.\+//') -k $(uname -rm|sed 's/\ /\//')
-dkms install vboxguest/$(pacman -Q virtualbox|awk {'print $2'}|sed 's/\-.\+//') -k $(uname -rm|sed 's/\ /\//')
+[[ $(which vboxhost 2>/dev/null) ]] && [[ $(which vboxguest 2>/dev/null) ]] && {
+	echo -e "\n:: \033[1mVirtualBox\033[0m\n"
+	dkms install vboxhost/$(pacman -Q virtualbox|awk {'print $2'}|sed 's/\-.\+//') -k $(uname -rm|sed 's/\ /\//')
+	dkms install vboxguest/$(pacman -Q virtualbox|awk {'print $2'}|sed 's/\-.\+//') -k $(uname -rm|sed 's/\ /\//')
+}
 
 echo -e "\n:: \033[1mUpdating Grub\033[0m\n"
 update-grub -a
