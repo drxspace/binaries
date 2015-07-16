@@ -22,7 +22,7 @@ fi
 	vmware-modconfig --console --install-all
 }
 
-[[ $(which vboxhost 2>/dev/null) ]] && [[ $(which vboxguest 2>/dev/null) ]] && {
+[[ $(which virtualbox 2>/dev/null) ]] && {
 	echo -e "\n:: \033[1mVirtualBox...\033[0m\n"
 	dkms install vboxhost/$(pacman -Q virtualbox|awk {'print $2'}|sed 's/\-.\+//') -k $(uname -rm|sed 's/\ /\//')
 	dkms install vboxguest/$(pacman -Q virtualbox|awk {'print $2'}|sed 's/\-.\+//') -k $(uname -rm|sed 's/\ /\//')
