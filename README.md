@@ -8,11 +8,17 @@ sudo apt-get install
 
 ```
 
+
 ```bash
-cp -fv getkey.desktop $HOME/Desktop/
+sudo -v
 sudo cp -fv getkey.sh /usr/local/bin/getkey
+cp -fv getkey.desktop $HOME/Desktop/
 sudo cp -fv mp42mkv.sh /usr/local/bin/mp42mkv
 
+```
+
+
+```bash
 su -c '
 	cp -fv startHLVB.sh /usr/local/bin/startHLVB
 	cp -fv stoprunningVBs.sh /usr/local/bin/stoprunningVBs
