@@ -2,10 +2,10 @@
 Version=1.0
 Name=Copy me that key
 GenericName=Copy me that key
-Comment=SSH key
+Comment=Copy to clipboard a stored key
 Exec=getkey
 Terminal=false
 Type=Application
 Categories=Applications;
-Icon=edit-paste
+Icon=security-high
 StartupNotify=true
