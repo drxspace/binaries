@@ -18,8 +18,7 @@ fi
 # reseting USB3 ports (if there none you'll get errors)
 for i in $(ls /sys/bus/pci/drivers/xhci_hcd/ | grep :); do
 	echo $i >/sys/bus/pci/drivers/xhci_hcd/unbind;
-	sleep 3;
 	echo $i >/sys/bus/pci/drivers/xhci_hcd/bind;
 done
 
-(( $? )) || notify-send "USB3 reset" "All USB3 ports were reset okay" -i face-wink &
+[[ $? -eq 0 ]] && notify-send "USB3 reset" "All USB3 ports were reset okay" -i face-wink
