@@ -2,9 +2,9 @@
 #
 # _________        ____  ____________         _______ ___________________
 # ______  /__________  |/ /___  ____/________ ___    |__  ____/___  ____/
-# _  __  / __  ___/__    / ______ \  ___  __ \__  /| |_  /     __  __/   
-# / /_/ /  _  /    _    |   ____/ /  __  /_/ /_  ___ |/ /___   _  /___   
-# \__,_/   /_/     /_/|_|  /_____/   _  .___/ /_/  |_|\____/   /_____/   
+# _  __  / __  ___/__    / ______ \  ___  __ \__  /| |_  /     __  __/
+# / /_/ /  _  /    _    |   ____/ /  __  /_/ /_  ___ |/ /___   _  /___
+# \__,_/   /_/     /_/|_|  /_____/   _  .___/ /_/  |_|\____/   /_____/
 #                                    /_/           drxspace@gmail.com
 #
 
@@ -16,9 +16,9 @@ if [[ $EUID -ne 0 ]]; then
 fi
 
 # reseting USB3 ports (if there none you'll get errors)
-for i in $(ls /sys/bus/pci/drivers/xhci_hcd/ | grep :); do
-	echo $i >/sys/bus/pci/drivers/xhci_hcd/unbind;
-	echo $i >/sys/bus/pci/drivers/xhci_hcd/bind;
+for usb in $(ls /sys/bus/pci/drivers/xhci_hcd/ | grep :); do
+	echo ${usb} >/sys/bus/pci/drivers/xhci_hcd/unbind;
+	echo ${usb} >/sys/bus/pci/drivers/xhci_hcd/bind;
 done
 
-[[ $? -eq 0 ]] && notify-send "USB3 reset" "All USB3 ports were reset okay" -i face-wink
+exit $?
