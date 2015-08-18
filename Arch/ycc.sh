@@ -17,7 +17,7 @@ if [[ -d /var/lib/pacman/sync ]]; then
 	pacman -Scc
 
 	echo -e "\nPacman sync repositories directory: /var/lib/pacman/sync"
-	echo -en ":: \033[1mDo you want to remove all the sync repositories databases? [y/N]: \033[0m"
+	echo -en ":: \033[1mDo you want to remove all the sync repositories databases? [y/N] \033[0m"
 	read ANS
 	[[ ${ANS:-N} == [Yy] ]] && {
 		echo "removing all sync repositories..."
