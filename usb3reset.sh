@@ -22,6 +22,6 @@ for usb in $(ls /sys/bus/pci/drivers/xhci_hcd/ | grep :); do
 	echo ${usb} >/sys/bus/pci/drivers/xhci_hcd/bind;
 done
 
-(( $? )) || echo "USB3 port(s) reset complete. Turn off and then back on your pc if you don't see any change.'"
+(( $? )) || echo "USB3 port(s) reset complete. Turn off and then back on your pc if you don't see any change"
 
 exit $?
