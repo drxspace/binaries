@@ -66,7 +66,7 @@ if [[ $nRepos -eq 0 ]]; then
 elif [[ $nNewRepos -gt 0 ]]; then
 	notify-send "Re-enable Repositories" "\n$nNewRepos repositories were re-enabled" -i face-wink;
 	echo -e "\e[0m\n\nDone. $nNewRepos repositories were re-enabled."
-else # $nNewRepos -eq 0
+else # $nRepos -gt 0 && $nNewRepos -eq 0
 	notify-send "Re-enable Repositories" "\nNone of the repositories was re-enabled" -i face-worried;
 	echo -e "\e[0m\n\nDone. None of the repositories was re-enabled."
 fi
