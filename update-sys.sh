@@ -12,17 +12,11 @@ set -e
 
 [[ $EUID -ne 0 ]] && exec $(which sudo) "$0" "$1"
 
-
-[[ "$1" = "-g" ]] && {
-	exec grub-mkconfig -o /boot/grub/grub.cfg;
-}
-
-[[ "$1" = "-m" ]] && {
+[[ "$1" = "-m" ]] || [[ "$1" = "" ]] || [[ "$1" = "-a" ]] && {
 	mkinitcpio -p linux;
 }
 
-[[ "$1" = "" ]] || [[ "$1" = "-a" ]] && {
-	mkinitcpio -p linux;
+[[ "$1" = "-g" ]] || [[ "$1" = "" ]] || [[ "$1" = "-a" ]] && {
 	exec grub-mkconfig -o /boot/grub/grub.cfg;
 }
 
