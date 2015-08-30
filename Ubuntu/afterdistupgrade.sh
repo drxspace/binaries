@@ -56,16 +56,17 @@ if [[ $nRepos -gt 0 ]]; then
 	done
 
 	cat /tmp/distupg.new-lst | xargs -n1 sed -i -e 's/^deb[[:space:]]/# deb /' -e "/^# deb[[:space:]]/s/$/ # disabled on upgrade to $(echo ${ReleaseCodename})/"
-else
-	notify-send "Re-enable Repositories" "\nThere are no repositories to re-enable" -i face-smirk;
 fi
 
 rm -f /tmp/distupg.*
 
-if [[ $nNewRepos -gt 0 ]]; then
+if [[ $nRepos -eq 0 ]]; then
+	notify-send "Re-enable Repositories" "\nThere are no repositories to re-enable. Bye!" -i face-smirk;
+	echo -e "\e[0mThere are no repositories to re-enable. Bye!"
+elif [[ $nNewRepos -gt 0 ]]; then
 	notify-send "Re-enable Repositories" "\n$nNewRepos repositories were re-enabled" -i face-wink;
 	echo -e "\e[0m\n\nDone. $nNewRepos repositories were re-enabled."
-else
+else # $nNewRepos -eq 0
 	notify-send "Re-enable Repositories" "\nNone of the repositories was re-enabled" -i face-worried;
 	echo -e "\e[0m\n\nDone. None of the repositories was re-enabled."
 fi
