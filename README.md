@@ -38,7 +38,7 @@ su -c '
 	cp -fv Ubuntu/afterdistupgrade.sh /usr/local/bin/afterdistupgrade
 	cp -fv Ubuntu/su-afterdistupgrade.sh /usr/local/bin/pkexec-afterdistupgrade
 	cp -fv Ubuntu/org.freedesktop.pkexec.run-afterdistupgrade-as-root.policy /usr/share/polkit-1/actions/
-	desktop-file-install afterdistupgrade.desktop
+	desktop-file-install Ubuntu/afterdistupgrade.desktop
 '
 
 ```
