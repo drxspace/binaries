@@ -10,11 +10,6 @@
 
 LANG=en_US.UTF-8
 
-###
-#
-# policykit fix for KDE not setting XAUTHORITY
-# BleachBitSuper is called as root so let's export $XAUTHORITY variable
-#
 if [[ -z "$XAUTHORITY" ]] && [[ -e "$HOME/.Xauthority" ]]; then
 	export XAUTHORITY="$HOME/.Xauthority"
 fi

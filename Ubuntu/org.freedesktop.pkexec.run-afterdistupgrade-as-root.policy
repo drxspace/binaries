@@ -9,7 +9,7 @@
     <vendor_url>https://github.com/drxspace</vendor_url>
     <description>Run Re-enable Repositories as root</description>
     <message>Re-enable Repositories requires admin privileges for its tasks</message>
-    <icon_name>afterdistupgrade</icon_name>
+    <icon_name>reload</icon_name>
 
     <defaults>
       <allow_any>no</allow_any>

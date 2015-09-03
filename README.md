@@ -14,10 +14,10 @@ sudo apt-get install
 ### All
 
 ```bash
-sudo -v
-sudo cp -fv getkey.sh /usr/local/bin/getkey
-cp -fv getkey.desktop $HOME/Desktop/
-sudo cp -fv mp42mkv.sh /usr/local/bin/mp42mkv
+	sudo -v
+	sudo cp -fv getkey.sh /usr/local/bin/getkey
+	cp -fv getkey.desktop $HOME/Desktop/
+	sudo cp -fv mp42mkv.sh /usr/local/bin/mp42mkv
 
 ```
 
@@ -42,6 +42,7 @@ su -c '
 '
 
 ```
+
 ### Arch
 
 ```bash
@@ -50,6 +51,20 @@ su -c '
 	cp -fv Arch/update-sys.sh /usr/local/sbin/update-sys
 	cp -fv Arch/yup.sh /usr/local/sbin/yup
 	cp -fv Arch/ycc.sh /usr/local/sbin/ycc
+'
+
+```
+
+## Uninstall
+
+### Debian
+
+```bash
+su -c '
+	rm -fv /usr/local/bin/afterdistupgrade
+	rm -fv /usr/local/bin/pkexec-afterdistupgrade
+	rm -fv /usr/share/polkit-1/actions/org.freedesktop.pkexec.run-afterdistupgrade-as-root.policy
+	rm -fv /usr/share/applications/afterdistupgrade.desktop
 '
 
 ```

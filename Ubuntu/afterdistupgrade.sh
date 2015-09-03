@@ -8,6 +8,10 @@
 #                                    /_/           drxspace@gmail.com
 #
 
+if [[ -z "$XAUTHORITY" ]] && [[ -e "$HOME/.Xauthority" ]]; then
+	export XAUTHORITY="$HOME/.Xauthority"
+fi
+
 if [[ $EUID -ne 0 ]]; then
 	exec $(which sudo) "$0"
 fi
