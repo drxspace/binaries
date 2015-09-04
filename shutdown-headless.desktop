@@ -1,8 +1,0 @@
-[Desktop Entry]
-Encoding=UTF-8
-Version=1.0
-Name=Shutdown Running VirtualBoxes
-Comment=Stops all running VirtualBox machines
-Type=Application
-Exec=stoprunningVBs
-Icon=shutdownVBs
