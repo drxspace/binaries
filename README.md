@@ -33,6 +33,8 @@ su -c '
 
 ### Debian
 
+##### Re-enable Repositories, 
+
 ```bash
 su -c '
 	cp -fv Ubuntu/afterdistupgrade.sh /usr/local/bin/afterdistupgrade
@@ -58,6 +60,8 @@ su -c '
 ## Uninstall
 
 ### Debian
+
+##### Re-enable Repositories, 
 
 ```bash
 su -c '
