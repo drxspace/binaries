@@ -21,12 +21,14 @@ sudo apt-get install
 
 ```
 
+##### VirtualBoxes, 
+
 ```bash
 su -c '
 	cp -fv startHLVB.sh /usr/local/bin/startHLVB
 	cp -fv stoprunningVBs.sh /usr/local/bin/stoprunningVBs
-	cp -fv shutdown.png /usr/share/pixmaps/
-	desktop-file-install shutdown-headless.desktop
+	cp -fv shutdownVBs.png /usr/share/pixmaps/
+	desktop-file-install shutdown-virtualboxes.desktop
 '
 
 ```
@@ -58,6 +60,20 @@ su -c '
 ```
 
 ## Uninstall
+
+### All
+
+##### VirtualBoxes, 
+
+```bash
+su -c '
+	rm -fv /usr/local/bin/startHLVB
+	rm -fv /usr/local/bin/stoprunningVBs
+	rm -fv /usr/share/pixmaps/shutdownVBs.png
+	rm -fv /usr/share/applications/shutdown-virtualboxes.desktop
+'
+
+```
 
 ### Debian
 
