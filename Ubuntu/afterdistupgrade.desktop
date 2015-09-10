@@ -10,4 +10,4 @@ Exec=pkexec-afterdistupgrade
 Icon=deja-dup
 Categories=GTK;System;
 Keywords=apt;ppa;
-X-StartupNotify=false
+StartupNotify=false
