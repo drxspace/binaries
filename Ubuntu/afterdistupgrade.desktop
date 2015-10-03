@@ -1,11 +1,11 @@
 [Desktop Entry]
 Version=1.0
 Type=Application
-Name=Re-enable Repositories
+Name=Re-enable Repositories v0.9
 Comment=Try to re-enable repositories been disabled after a distro upgrade
 Comment[el]=Προσπάθεια επανενεργοποίησης των αποθετηρίων που έχουν απενεργοποιηθεί μετά από μια αναβάθμιση διανομής
-GenericName=Re-enable repositories tool
-GenericName[el]=Εργαλείο επανενεργοποίησης αποθετηρίων
+GenericName=Re-enable repositories tool, version 0.9
+GenericName[el]=Εργαλείο επανενεργοποίησης αποθετηρίων, έκδοση 0.9
 Exec=pkexec-afterdistupgrade
 Icon=un-reboot
 Categories=GTK;System;

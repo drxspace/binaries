@@ -17,11 +17,11 @@ fi
 if [[ "$XAUTHORITY" ]]; then
 	pkexec "$(which afterdistupgrade)"
 elif [[ -x "$(which gksu)" ]]; then
-	gksu -S -m "BleachBitSuper requires admin privileges for its tasks" "$(which afterdistupgrade)"
+	gksu -S -m "Re-enable Repositories requires admin privileges for its tasks" "$(which afterdistupgrade)"
 elif [[ -x "$(which kdesu)" ]]; then
 	kdesu "$(which afterdistupgrade)"
 else
-	notify-send "AfterDistUpgrade" "No authentication program found." -i face-sad &
+	notify-send "Re-enable Repositories" "No authentication program found." -i face-sad &
 	exit 1
 fi
 

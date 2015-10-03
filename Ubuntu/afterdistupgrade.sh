@@ -17,7 +17,6 @@ if [[ $EUID -ne 0 ]]; then
 fi
 
 Verbose=true
-
 nRepos=0
 nNewRepos=0
 ReleaseCodename="$(lsb_release -cs)"
@@ -53,7 +52,10 @@ if [[ $nRepos -gt 0 ]]; then
 		return_val=$?;
 		if [[ $return_val -eq 1 ]]; then
 			: $(( nNewRepos++ ));
-			$Verbose && echo -en "\e[1;32m\n++ Re-enabled repository's URL: $PPAurl";
+			$Verbose && {
+				notify-send "Re-enable Repositories" "\n$PPAurl repository was re-enabled" -i face-wink;
+				echo -en "\e[1;32m\n++ Re-enabled repository's URL: $PPAurl";
+			}
 		else
 			echo $PPAfn >> /tmp/distupg.new-lst;
 		fi;
