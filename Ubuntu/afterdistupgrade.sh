@@ -37,8 +37,7 @@ PPAisOK() {
 }
 
 getPPAsName() {
-	local ppaname="$(cat "$1" | grep -E "^deb[[:space:]]" | cut -d\/ -f4)";
-	echo -n "${ppaname}";
+	echo -n "$(cat "$1" | grep -E "^deb[[:space:]]" | cut -d\/ -f4)";
 }
 
 grep -lE "^# deb[[:space:]]" /etc/apt/sources.list.d/*.list > /tmp/distupg.lst
