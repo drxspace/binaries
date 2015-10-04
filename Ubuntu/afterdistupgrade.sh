@@ -21,11 +21,6 @@ nRepos=0
 nNewRepos=0
 ReleaseCodename="$(lsb_release -cs)"
 
-PPAisOK() {
-	[[ $(wget -q --no-check-certificate -S --spider "$1" 2>&1 | grep -E '^\s*HTTP.*?200') ]] && return 1
-	return 0
-}
-
 makeURL() {
 	local url="$(cat "$1" | grep -E "^deb[[:space:]]" | cut -d\  -f2-)";
 	if [[ $(echo -n "$url" | wc -w) -gt 2 ]]; then
@@ -34,6 +29,16 @@ makeURL() {
 	else
 		echo -n "${url% *}";
 	fi
+}
+
+PPAisOK() {
+	[[ $(wget -q --no-check-certificate -S --spider "$1" 2>&1 | grep -E '^\s*HTTP.*?200') ]] && return 1
+	return 0
+}
+
+getPPAsName() {
+	local ppaname="$(cat "$1" | grep -E "^deb[[:space:]]" | cut -d\/ -f4)";
+	echo -n "${ppaname}";
 }
 
 grep -lE "^# deb[[:space:]]" /etc/apt/sources.list.d/*.list > /tmp/distupg.lst
@@ -53,7 +58,7 @@ if [[ $nRepos -gt 0 ]]; then
 		if [[ $return_val -eq 1 ]]; then
 			: $(( nNewRepos++ ));
 			$Verbose && {
-				notify-send "Re-enable Repositories" "\n$PPAurl repository was re-enabled" -i face-wink;
+				notify-send "Re-enable Repositories" "\n$(getPPAsName "$PPAfn") repository was re-enabled" -i face-wink;
 				echo -en "\e[1;32m\n++ Re-enabled repository's URL: $PPAurl";
 			}
 		else
