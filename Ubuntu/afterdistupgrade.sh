@@ -58,7 +58,7 @@ if [[ $nRepos -gt 0 ]]; then
 		if [[ $return_val -eq 1 ]]; then
 			: $(( nNewRepos++ ));
 			$Verbose && {
-				notify-send "Re-enable Repositories" "\n$(getPPAsName "$PPAfn") repository was re-enabled" -i face-wink;
+				notify-send "Re-enable Repositories" "\n$(getPPAsName "$PPAfn") repository was re-enabled" -i face-smile;
 				echo -en "\e[1;32m\n++ Re-enabled repository's URL: $PPAurl";
 			}
 		else
@@ -75,7 +75,7 @@ if [[ $nRepos -eq 0 ]]; then
 	notify-send "Re-enable Repositories" "\nThere are no repositories to re-enable. Bye!" -i face-smirk;
 	echo -e "\e[0mThere are no repositories to re-enable. Bye!"
 elif [[ $nNewRepos -gt 0 ]]; then
-	notify-send "Re-enable Repositories" "\n$nNewRepos repositories were re-enabled" -i face-wink;
+	notify-send "Re-enable Repositories" "\n$nNewRepos repositories were re-enabled" -i face-cool;
 	echo -e "\e[0m\n\nDone. $nNewRepos repositories were re-enabled."
 else # $nRepos -gt 0 && $nNewRepos -eq 0
 	notify-send "Re-enable Repositories" "\nNone of the repositories was re-enabled" -i face-worried;
