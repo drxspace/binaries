@@ -18,6 +18,7 @@ sudo apt-get install
 	sudo cp -fv getkey.sh /usr/local/bin/getkey
 	cp -fv getkey.desktop $HOME/Desktop/
 	sudo cp -fv mp42mkv.sh /usr/local/bin/mp42mkv
+	sudo cp -fv termites.sh /usr/local/bin/termites
 
 ```
 
