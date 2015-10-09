@@ -8,6 +8,16 @@
 #                                    /_/           drxspace@gmail.com
 #
 
+# First, check to see if all needed tools are present
+[[ -x $(which wget 2>/dev/null) ]] || {
+	echo -e ":: \033[1mwget\033[0m: command not found!\nUse sudo apt-get install wget to install it" 1>&2;
+	exit 1;
+}
+[[ -x $(which notify-send 2>/dev/null) ]] || {
+	echo -e ":: \033[1mnotify-send\033[0m: command not found!\nUse sudo apt-get install libnotify-bin to install it" 1>&2;
+	exit 2;
+}
+
 if [[ -z "$XAUTHORITY" ]] && [[ -e "$HOME/.Xauthority" ]]; then
 	export XAUTHORITY="$HOME/.Xauthority"
 fi
