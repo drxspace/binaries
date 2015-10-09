@@ -22,7 +22,7 @@ sudo apt-get install
 
 ```
 
-##### VirtualBoxes, 
+##### VirtualBoxes
 
 ```bash
 su -c '
@@ -36,7 +36,7 @@ su -c '
 
 ### Debian
 
-##### Re-enable Repositories version 1.0 (20151004), 
+##### Re-enable Repositories version 1.1 (20151009)
 
 ```bash
 su -c '
@@ -64,7 +64,7 @@ su -c '
 
 ### All
 
-##### VirtualBoxes, 
+##### VirtualBoxes
 
 ```bash
 su -c '
@@ -78,7 +78,7 @@ su -c '
 
 ### Debian
 
-##### Re-enable Repositories, 
+##### Re-enable Repositories
 
 ```bash
 su -c '
