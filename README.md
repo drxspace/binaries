@@ -36,7 +36,7 @@ su -c '
 
 ### Debian
 
-##### Re-enable Repositories version 1.1 (20151009)
+##### Re-enable Repositories version 1.2 (20151010)
 
 ```bash
 su -c '

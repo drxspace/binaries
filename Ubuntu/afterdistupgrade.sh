@@ -8,14 +8,29 @@
 #                                    /_/           drxspace@gmail.com
 #
 
+# Using przemoc's lockable script boilerplate
+# https://gist.github.com/przemoc/571091
+LOCKFILE="/var/lock/`basename $0`"
+LOCKFD=99
+
+_lock()             { flock -$1 $LOCKFD; }
+_no_more_locking()  { _lock u; _lock xn && rm -f $LOCKFILE; }
+_prepare_locking()  { eval "exec $LOCKFD>\"$LOCKFILE\""; trap _no_more_locking EXIT; }
+
+_prepare_locking
+
+exlock_now()        { _lock xn; }  # obtain an exclusive lock immediately or fail
+exlock()            { _lock x; }   # obtain an exclusive lock
+unlock()            { _lock u; }   # drop a lock
+
 # Check to see if all needed tools are present
 [[ -x $(which wget 2>/dev/null) ]] || {
 	echo -e ":: \033[1mwget\033[0m: command not found!\nUse sudo apt-get install wget to install it" 1>&2;
-	exit 1;
+	exit 2;
 }
 [[ -x $(which notify-send 2>/dev/null) ]] || {
 	echo -e ":: \033[1mnotify-send\033[0m: command not found!\nUse sudo apt-get install libnotify-bin to install it" 1>&2;
-	exit 2;
+	exit 3;
 }
 
 if [[ -z "$XAUTHORITY" ]] && [[ -e "$HOME/.Xauthority" ]]; then
@@ -28,6 +43,7 @@ fi
 
 # Initialize the sound system
 [[ -x $(which paplay 2>/dev/null) ]] && [[ -d /usr/share/sounds/freedesktop/stereo/ ]] && {
+	WarnSnd="$(which paplay) /usr/share/sounds/freedesktop/stereo/suspend-error.oga";
 	StartSnd="$(which paplay) /usr/share/sounds/freedesktop/stereo/window-attention.oga";
 	FoundSnd="$(which paplay) /usr/share/sounds/freedesktop/stereo/complete.oga";
 	NoneSnd="$(which paplay) /usr/share/sounds/freedesktop/stereo/message-new-instant.oga";
@@ -59,13 +75,20 @@ getPPAsName() {
 	echo -n "$(cat "$1" | grep -E "^deb[[:space:]]" | cut -d\/ -f4)";
 }
 
+
+exlock_now || {
+	echo -e "(!) \033[1mThis script is already running\033[0m\n    Please try again later..." 1>&2;
+	$(${WarnSnd});
+	exit 1;
+}
+
 grep -lE "^# deb[[:space:]]" /etc/apt/sources.list.d/*.list > /tmp/distupg.lst
 nRepos=$(wc -l < /tmp/distupg.lst)
 
 if [[ $nRepos -gt 0 ]]; then
 	echo -en "\e[1;34m::\e[0;34m There are $nRepos repositories that I'll try to re-enable.\n   Please wait for this process to complete...";
-	$(${StartSnd});
 	notify-send "Re-enable Repositories" "\nThere are $nRepos repositories that I'll try to re-enable.\nPlease wait for this process to complete..." -i face-wink;
+	$(${StartSnd});
 
 	cat /tmp/distupg.lst | xargs -n1 sed -i -e 's/^# deb[[:space:]]/deb /' -e "s/ # disabled on upgrade to $(echo ${ReleaseCodename})//g";
 
@@ -77,8 +100,8 @@ if [[ $nRepos -gt 0 ]]; then
 		if [[ $return_val -eq 1 ]]; then
 			: $(( nNewRepos++ ));
 			$Verbose && echo -en "\e[1;32m\n++ Re-enabled repository's URL: $PPAurl";
-			$(${FoundSnd});
 			notify-send "Re-enable Repositories" "\n$(getPPAsName "$PPAfn") repository was re-enabled" -i face-smile;
+			$(${FoundSnd});
 		else
 			echo $PPAfn >> /tmp/distupg.new-lst;
 		fi;
@@ -91,16 +114,18 @@ rm -f /tmp/distupg.*
 
 if [[ $nRepos -eq 0 ]]; then
 	echo -e "\e[0mThere are no repositories to re-enable. Bye!"
-	$(${NoneSnd});
 	notify-send "Re-enable Repositories" "\nThere are no repositories to re-enable. Bye!" -i face-smirk;
+	$(${NoneSnd});
 elif [[ $nNewRepos -gt 0 ]]; then
 	echo -e "\e[0m\n\nDone. $nNewRepos repositories were re-enabled.";
-	$(${HappySnd});
 	notify-send "Re-enable Repositories" "\n$nNewRepos repositories were re-enabled" -i face-cool;
+	$(${HappySnd});
 else # $nRepos -gt 0 && $nNewRepos -eq 0
 	echo -e "\e[0m\n\nDone. None of the repositories was re-enabled.";
-	$(${UnhappySnd});
 	notify-send "Re-enable Repositories" "\nNone of the repositories was re-enabled" -i face-worried;
+	$(${UnhappySnd});
 fi
+
+unlock
 
 exit $?
