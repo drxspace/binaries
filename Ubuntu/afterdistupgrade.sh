@@ -25,11 +25,11 @@ unlock()            { _lock u; }   # drop a lock
 
 # Check to see if all needed tools are present
 [[ -x $(which wget 2>/dev/null) ]] || {
-	echo -e ":: \033[1mwget\033[0m: command not found!\nUse sudo apt-get install wget to install it" 1>&2;
+	echo -e ":: \e[1mwget\e[0m: command not found!\nUse sudo apt-get install wget to install it" 1>&2;
 	exit 2;
 }
 [[ -x $(which notify-send 2>/dev/null) ]] || {
-	echo -e ":: \033[1mnotify-send\033[0m: command not found!\nUse sudo apt-get install libnotify-bin to install it" 1>&2;
+	echo -e ":: \e[1mnotify-send\e[0m: command not found!\nUse sudo apt-get install libnotify-bin to install it" 1>&2;
 	exit 3;
 }
 
@@ -57,7 +57,7 @@ nNewRepos=0
 ReleaseCodename="$(lsb_release -cs)"
 
 makeURL() {
-	local url="$(cat "$1" | grep -E "^deb[[:space:]]" | cut -d\  -f2-)";
+	local url="$(sed -n -e 's/^# deb[[:space:]]//' -e "s/[[:space:]]*# disabled on upgrade to $(echo ${ReleaseCodename})//gp" "$1")";
 	if [[ $(echo -n "$url" | wc -w) -gt 2 ]]; then
 		url="$(echo -n $url | tr \  \/)";
 		echo -n "${url//$ReleaseCodename/dists\/$ReleaseCodename}";
@@ -77,22 +77,20 @@ getPPAsName() {
 
 
 exlock_now || {
-	echo -e "(!) \033[1mThis script is already running\033[0m\n    Please try again later..." 1>&2;
+	echo -e "\e[1m(!)\e[0m This script is already running\n    Please try again later..." 1>&2;
 	$(${WarnSnd});
 	exit 1;
 }
 
-grep -lE "^# deb[[:space:]]" /etc/apt/sources.list.d/*.list > /tmp/distupg.lst
-nRepos=$(wc -l < /tmp/distupg.lst)
+grep -lE "^# deb[[:space:]]" /etc/apt/sources.list.d/*.list > /tmp/wantupg.lst
+nRepos=$(wc -l < /tmp/wantupg.lst)
 
 if [[ $nRepos -gt 0 ]]; then
 	echo -en "\e[1;34m::\e[0;34m There are $nRepos repositories that I'll try to re-enable.\n   Please wait for this process to complete...";
 	notify-send "Re-enable Repositories" "\nThere are $nRepos repositories that I'll try to re-enable.\nPlease wait for this process to complete..." -i face-wink;
 	$(${StartSnd});
 
-	cat /tmp/distupg.lst | xargs -n1 sed -i -e 's/^# deb[[:space:]]/deb /' -e "s/ # disabled on upgrade to $(echo ${ReleaseCodename})//g";
-
-	for PPAfn in $(cat /tmp/distupg.lst); do
+	for PPAfn in $(cat /tmp/wantupg.lst); do
 		PPAurl=$(makeURL "$PPAfn");
 		$Verbose && echo -en "\e[0m\n-  URL in process: $PPAurl";
 		PPAisOK "$PPAurl";
@@ -102,15 +100,15 @@ if [[ $nRepos -gt 0 ]]; then
 			$Verbose && echo -en "\e[1;32m\n++ Re-enabled repository's URL: $PPAurl";
 			notify-send "Re-enable Repositories" "\n$(getPPAsName "$PPAfn") repository was re-enabled" -i face-smile;
 			$(${FoundSnd});
-		else
-			echo $PPAfn >> /tmp/distupg.new-lst;
+			echo $PPAfn >> /tmp/wantupg.new-lst;
 		fi;
 	done
-
-	cat /tmp/distupg.new-lst | xargs -n1 sed -i -e 's/^deb[[:space:]]/# deb /' -e "/^# deb[[:space:]]/s/$/ # disabled on upgrade to $(echo ${ReleaseCodename})/";
+	# Re-enable any working repositories
+	[[ -f /tmp/wantupg.new-lst ]] && cat /tmp/wantupg.new-lst | xargs -n1 sed -i sed -i -e 's/^# deb[[:space:]]/deb /' -e "s/[[:space:]]*# disabled on upgrade to $(echo ${ReleaseCodename})//g";
 fi
 
-rm -f /tmp/distupg.*
+# Do some cleaning
+rm -f /tmp/wantupg.*
 
 if [[ $nRepos -eq 0 ]]; then
 	echo -e "\e[0mThere are no repositories to re-enable. Bye!"
