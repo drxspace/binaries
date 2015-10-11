@@ -72,7 +72,7 @@ PPAisOK() {
 }
 
 getPPAsName() {
-	echo -n "$(cat "$1" | grep -E "^deb[[:space:]]" | cut -d\/ -f4)";
+	echo -n "$(cat "$1" | grep -E "^# deb[[:space:]]" | cut -d\/ -f4)";
 }
 
 
