@@ -104,7 +104,7 @@ if [[ $nRepos -gt 0 ]]; then
 		fi;
 	done
 	# Re-enable any working repositories
-	[[ -f /tmp/wantupg.new-lst ]] && cat /tmp/wantupg.new-lst | xargs -n1 sed -i sed -i -e 's/^# deb[[:space:]]/deb /' -e "s/[[:space:]]*# disabled on upgrade to $(echo ${ReleaseCodename})//g";
+	[[ -f /tmp/wantupg.new-lst ]] && cat /tmp/wantupg.new-lst | xargs -n1 sed -i -e 's/^# deb[[:space:]]/deb /' -e "s/[[:space:]]*# disabled on upgrade to $(echo ${ReleaseCodename})//g";
 fi
 
 # Do some cleaning
