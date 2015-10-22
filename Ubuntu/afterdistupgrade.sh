@@ -82,7 +82,7 @@ exlock_now || {
 	exit 1;
 }
 
-grep -lE "^# deb[[:space:]]" /etc/apt/sources.list.d/*.list > /tmp/wantupg.lst
+grep -lE "[[:space:]]*# disabled on upgrade to $(echo ${ReleaseCodename})" /etc/apt/sources.list.d/*.list > /tmp/wantupg.lst
 nRepos=$(wc -l < /tmp/wantupg.lst)
 
 if [[ $nRepos -gt 0 ]]; then
