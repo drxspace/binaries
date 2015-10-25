@@ -23,13 +23,12 @@ wget -q -N "https://www.archlinux.org/mirrorlist/?country=${COUNTRIES[0]}&countr
 echo -en "\n\e[1;34m::\e[0;34m Ranking the mirrors. Please wait..."
 $(which rankmirrors) -n 6 /tmp/mirrorlist.tmp > /etc/pacman.d/mirrorlist
 
-echo -e "\e[0;94m\e[40m\n"
+echo -e "\n\e[0;94m\e[40m"
 cat /etc/pacman.d/mirrorlist
 
-echo -e "\e[0m\e[31m"
+echo -e "\e[0;100m\e[0;91m"
 # Clean up the unwanted files
 rm -fv /tmp/mirrorlist.tmp /etc/pacman.d/mirrorlist.*
-
 echo -e "\e[0m\nDone okay."
 
 exit $?
