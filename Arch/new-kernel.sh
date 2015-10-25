@@ -1,4 +1,4 @@
-#!/bin/bash -e
+#!/bin/bash
 #
 # _________        ____  ____________         _______ ___________________
 # ______  /__________  |/ /___  ____/________ ___    |__  ____/___  ____/
@@ -17,15 +17,15 @@ fi
 	catalyst_build_module $(uname -r)
 }
 
-[[ -x $(which vmware-modconfig 2>/dev/null) ]] && {
-	echo -e "\n:: \033[1mVMware...\033[0m\n"
-	vmware-modconfig --console --install-all
-}
-
 [[ -x $(which virtualbox 2>/dev/null) ]] && {
 	echo -e "\n:: \033[1mVirtualBox...\033[0m\n"
 	dkms install vboxhost/$(pacman -Q virtualbox|awk {'print $2'}|sed 's/\-.\+//') -k $(uname -rm|sed 's/\ /\//')
 	dkms install vboxguest/$(pacman -Q virtualbox|awk {'print $2'}|sed 's/\-.\+//') -k $(uname -rm|sed 's/\ /\//')
+}
+
+[[ -x $(which vmware-modconfig 2>/dev/null) ]] && {
+	echo -e "\n:: \033[1mVMware...\033[0m\n"
+	vmware-modconfig --console --install-all
 }
 
 echo -e "\n:: \033[1mUpdating System...\033[0m\n"
