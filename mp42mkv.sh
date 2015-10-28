@@ -14,9 +14,7 @@ Undot() {
 	echo -n "${1//./ }";
 }
 
-OUTPUTPARAMS=""
 GLOBALOPT="--disable-track-statistics-tags\n"
-LANGSPARAMS=""
 
 declare -A ALTERLANG
 ALTERLANG[0,0]="el"
@@ -25,10 +23,14 @@ ALTERLANG[0,2]="Ελληνικοί υπότιτλοι"
 
 INPUTPARAMS=""
 
-for f in $(ls *.{avi,mp4} 2>/dev/null); do
+IFS=$'\n\b'
+
+for f in *.{avi,mp4}; do
 	[[ -f "${f}" ]] && {
-		[[ -f "${f%.*}".en.srt ]] && { LANGSPARAMS="--language\n0:eng\n--track-name\n0:English subtitles\n--sub-charset\n0:UTF-8\n--default-track\n0:yes\n--forced-track\n0:no\n-s\n0\n-D\n-A\n-T\n--no-global-tags\n--no-chapters\n(\n"$(printf "%s" "${f%.*}.en.srt")"\n)\n"; }
-		[[ -f "${f%.*}".${ALTERLANG[0,0]}.srt ]] && { LANGSPARAMS=${LANGSPARAMS}"--language\n0:${ALTERLANG[0,1]}\n--track-name\n0:${ALTERLANG[0,2]}\n--sub-charset\n0:UTF-8\n--forced-track\n0:no\n-s\n0\n-D\n-A\n-T\n--no-global-tags\n--no-chapters\n(\n"$(printf "%s" "${f%.*}.${ALTERLANG[0,0]}.srt")"\n)\n"; }
+		OUTPUTPARAMS=""
+		LANGSPARAMS=""
+		[[ -f "${f%.*}".en.srt ]] && { LANGSPARAMS="--language\n0:eng\n--track-name\n0:English subtitles\n--sub-charset\n0:UTF-8\n--default-track\n0:yes\n--forced-track\n0:no\n-s\n0\n-D\n-A\n-T\n--no-global-tags\n--no-chapters\n(\n""${f%.*}.en.srt""\n)\n"; }
+		[[ -f "${f%.*}".${ALTERLANG[0,0]}.srt ]] && { LANGSPARAMS=${LANGSPARAMS}"--language\n0:${ALTERLANG[0,1]}\n--track-name\n0:${ALTERLANG[0,2]}\n--sub-charset\n0:UTF-8\n--forced-track\n0:no\n-s\n0\n-D\n-A\n-T\n--no-global-tags\n--no-chapters\n(\n""${f%.*}.${ALTERLANG[0,0]}.srt""\n)\n"; }
 
 		OUTPUTPARAMS="--output\n${f%.*}.mkv\n"
 		INPUTPARAMS="--forced-track\n0:no\n--forced-track\n1:no\n-a\n1\n-d\n0\n-S\n-T\n--no-global-tags\n--no-chapters\n--title\n$(Undot "${f%.*}")\n(\n${f}\n)\n"
@@ -40,7 +42,6 @@ for f in $(ls *.{avi,mp4} 2>/dev/null); do
 			notify-send "MP4 to MKV convertor" "Problems with the converting proccess." -i face-worried;
 			exit 2;
 		}
-
 	} || {
 		notify-send "MP4 to MKV convertor" "None avi or mp4 file found in this directory to convert." -i face-plain;
 		exit 1;
