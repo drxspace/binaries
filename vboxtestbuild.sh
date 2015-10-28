@@ -77,7 +77,7 @@ while [ $i -lt ${#arrSiteVBver[@]} ]; do
 		[[ ${ANS:-Y} == [Yy] ]] && InstallVirtualBox $i
 		break;
 	fi;
-	: $(( i++ ));
+	: $(( i+=2 ));
 done
 
 if [ $i -ge ${#arrSiteVBver[@]} ]; then
