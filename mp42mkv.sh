@@ -25,7 +25,7 @@ INPUTPARAMS=""
 
 IFS=$'\n\b'
 
-for f in *.{avi,mp4}; do
+for f in $(ls *.{avi,mp4} 2>/dev/null); do
 	[[ -f "${f}" ]] && {
 		OUTPUTPARAMS=""
 		LANGSPARAMS=""
