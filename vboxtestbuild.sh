@@ -22,26 +22,26 @@ declare -a arrSiteVBlnk
 declare -a arrSiteVBver
 
 InstallVirtualBox() {
-	local i=$1
+	local i=$1;
 	local vboxurl="${arrSiteVBlnk[$i]}"; let i+=1;
-	local extpurl="${arrSiteVBlnk[$i]}"
+	local extpurl="${arrSiteVBlnk[$i]}";
 	
-	echo "Downloading “${vboxurl##*/}”, please wait..."
-	wget -q --show-progress --progress=bar:force -N -4 -t 1 -O /tmp/${vboxurl##*/} "${vboxurl}"
-	echo "Downloading “${extpurl##*/}”, please wait..."
-	wget -q --show-progress --progress=bar:force -N -4 -t 1 -O /tmp/${extpurl##*/} "${extpurl}"
+	echo "Downloading “${vboxurl##*/}”, please wait...";
+	wget -q --show-progress --progress=bar:force -N -4 -t 1 -O /tmp/${vboxurl##*/} "${vboxurl}";
+	echo "Downloading “${extpurl##*/}”, please wait...";
+	wget -q --show-progress --progress=bar:force -N -4 -t 1 -O /tmp/${extpurl##*/} "${extpurl}";
 	# Request root privileges
-	echo -e "Following processes requires root user privileges.\nRequesting root access if we don't already have it..."
-	echo -e "Installing VirtualBox..."
-	sudo -v
-	sudo sh /tmp/${vboxurl##*/}
-	echo -e "...to uninstall it run the commands\n\e[0;94msudo /opt/VirtualBox/uninstall.sh\e[0m\n\e[0;94msudo rm -rf /opt/VirtualBox/\e[0m"
+	echo -e "Following processes requires root user privileges.\nRequesting root access if we don't already have it...";
+	echo -e "Installing VirtualBox...";
+	sudo -v;
+	sudo sh /tmp/${vboxurl##*/};
+	echo -e "...to uninstall it run the commands\n\e[0;94msudo /opt/VirtualBox/uninstall.sh\e[0m\n\e[0;94msudo rm -rf /opt/VirtualBox/\e[0m";
 	[[ $(groups | grep vboxusers) ]] || {
 		echo -e "\nAdding user $(whoami) to ‘vboxusers’ group...";
 		sudo usermod -aG vboxusers $(whoami);
 	}
-	echo -e "\nInstalling VirtualBox extensions pack..."
-	[[ -x $(which virtualbox 2>/dev/null) ]] && $(which virtualbox) /tmp/${extpurl##*/}
+	echo -e "\nInstalling VirtualBox extensions pack...";
+	[[ -x $(which virtualbox 2>/dev/null) ]] && $(which virtualbox) /tmp/${extpurl##*/} & ;
 }
 
 # Current VirtualBox version installed
