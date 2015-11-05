@@ -41,7 +41,7 @@ InstallVirtualBox() {
 		sudo usermod -aG vboxusers $(whoami);
 	}
 	echo -e "\nInstalling VirtualBox extensions pack...";
-	[[ -x $(which virtualbox 2>/dev/null) ]] && $(which virtualbox) /tmp/${extpurl##*/} & ;
+	[[ -x $(which virtualbox 2>/dev/null) ]] && { $(which virtualbox) /tmp/${extpurl##*/}; } &
 }
 
 # Current VirtualBox version installed
