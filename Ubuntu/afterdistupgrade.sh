@@ -33,10 +33,15 @@ unlock()            { _lock u; }   # drop a lock
 	exit 3;
 }
 
+# Getting access to the display
+if [[ -z "$DISPLAY" ]]; then
+	export DISPLAY=$(/bin/ps -Afl | /bin/grep Xorg | /bin/grep -v grep | /usr/bin/awk '{print $16 ".0"}');
+fi
 if [[ -z "$XAUTHORITY" ]] && [[ -e "$HOME/.Xauthority" ]]; then
 	export XAUTHORITY="$HOME/.Xauthority";
 fi
 
+# Run script as root
 if [[ $EUID -ne 0 ]]; then
 	exec $(which sudo) "$0";
 fi
