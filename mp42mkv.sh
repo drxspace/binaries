@@ -14,6 +14,8 @@ Undot() {
 	echo -n "${1//./ }";
 }
 
+rm -f /tmp/mkvoptionsfile
+
 GLOBALOPT="--disable-track-statistics-tags\n"
 
 declare -A ALTERLANG
@@ -26,29 +28,29 @@ INPUTPARAMS=""
 IFS=$'\n\b'
 
 for f in $(ls *.{avi,mp4} 2>/dev/null); do
-	[[ -f "${f}" ]] && {
-		OUTPUTPARAMS=""
-		LANGSPARAMS=""
-		[[ -f "${f%.*}".en.srt ]] && { LANGSPARAMS="--language\n0:eng\n--track-name\n0:English subtitles\n--sub-charset\n0:UTF-8\n--default-track\n0:yes\n--forced-track\n0:no\n-s\n0\n-D\n-A\n-T\n--no-global-tags\n--no-chapters\n(\n""${f%.*}.en.srt""\n)\n"; }
-		[[ -f "${f%.*}".${ALTERLANG[0,0]}.srt ]] && { LANGSPARAMS=${LANGSPARAMS}"--language\n0:${ALTERLANG[0,1]}\n--track-name\n0:${ALTERLANG[0,2]}\n--sub-charset\n0:UTF-8\n--forced-track\n0:no\n-s\n0\n-D\n-A\n-T\n--no-global-tags\n--no-chapters\n(\n""${f%.*}.${ALTERLANG[0,0]}.srt""\n)\n"; }
+	OUTPUTPARAMS=""
+	LANGSPARAMS=""
+	[[ -f "${f%.*}".en.srt ]] && { LANGSPARAMS="--language\n0:eng\n--track-name\n0:English subtitles\n--sub-charset\n0:UTF-8\n--default-track\n0:yes\n--forced-track\n0:no\n-s\n0\n-D\n-A\n-T\n--no-global-tags\n--no-chapters\n(\n""${f%.*}.en.srt""\n)\n"; }
+	[[ -f "${f%.*}".${ALTERLANG[0,0]}.srt ]] && { LANGSPARAMS=${LANGSPARAMS}"--language\n0:${ALTERLANG[0,1]}\n--track-name\n0:${ALTERLANG[0,2]}\n--sub-charset\n0:UTF-8\n--forced-track\n0:no\n-s\n0\n-D\n-A\n-T\n--no-global-tags\n--no-chapters\n(\n""${f%.*}.${ALTERLANG[0,0]}.srt""\n)\n"; }
 
-		OUTPUTPARAMS="--output\n${f%.*}.mkv\n"
-		INPUTPARAMS="--forced-track\n0:no\n--forced-track\n1:no\n-a\n1\n-d\n0\n-S\n-T\n--no-global-tags\n--no-chapters\n--title\n$(Undot "${f%.*}")\n(\n${f}\n)\n"
+	OUTPUTPARAMS="--output\n${f%.*}.mkv\n"
+	INPUTPARAMS="--forced-track\n0:no\n--forced-track\n1:no\n-a\n1\n-d\n0\n-S\n-T\n--no-global-tags\n--no-chapters\n--title\n$(Undot "${f%.*}")\n(\n${f}\n)\n"
 
-		echo -e "${OUTPUTPARAMS}${GLOBALOPT}${LANGSPARAMS}${INPUTPARAMS}" > /tmp/mkvoptionsfile
-		sed -i -e 's/\\/\\\\/g' -e 's/ /\\s/g' -e 's/\"/\\2/g' -e 's/\:/\\c/g' -e 's/\#/\\h/g' /tmp/mkvoptionsfile
+	echo -e "${OUTPUTPARAMS}${GLOBALOPT}${LANGSPARAMS}${INPUTPARAMS}" > /tmp/mkvoptionsfile
+	sed -i -e 's/\\/\\\\/g' -e 's/ /\\s/g' -e 's/\"/\\2/g' -e 's/\:/\\c/g' -e 's/\#/\\h/g' /tmp/mkvoptionsfile
 
-		"$(which mkvmerge)" @/tmp/mkvoptionsfile || {
-			notify-send "MP4 to MKV convertor" "Problems with the converting proccess." -i face-worried;
-			exit 2;
-		}
-	} || {
-		notify-send "MP4 to MKV convertor" "None avi or mp4 file found in this directory to convert." -i face-plain;
-		exit 1;
+	"$(which mkvmerge)" @/tmp/mkvoptionsfile || {
+		notify-send "MP4 to MKV convertor" "Problems with the converting proccess." -i face-worried;
+		exit 2;
 	}
 done
 
-rm -vf /tmp/mkvoptionsfile *.{avi,mp4,srt}
-notify-send "MP4 to MKV convertor" "All files were converted to mkv." -i face-smile;
+[[ -f "/tmp/mkvoptionsfile" ]] && {
+	rm -vf /tmp/mkvoptionsfile *.{avi,mp4,srt}
+	notify-send "MP4 to MKV convertor" "All files were converted to mkv." -i face-smile;
+} || {
+	notify-send "MP4 to MKV convertor" "None avi or mp4 file found in this directory to convert." -i face-plain;
+	exit 1;
+}
 
 exit 0
