@@ -9,6 +9,11 @@
 #
 #set -x
 
+Help() {
+	echo -e "mp42mkv: Showing help";
+	exit 4;
+}
+
 Undot() {
 	echo -n "${1//./ }";
 }
@@ -25,6 +30,8 @@ ConvTotal=0
 ConvError=0
 ConvWarn=0
 ConvOkay=0
+WrongOption=""
+yes=false
 
 INPUTPARAMS=""
 IFS=$'\n\b'
@@ -33,6 +40,27 @@ declare -A ALTERLANG
 ALTERLANG[0,0]="el"
 ALTERLANG[0,1]="gre"
 ALTERLANG[0,2]="Ελληνικοί υπότιτλοι"
+
+while [[ "$1" == -* ]]; do
+	case $1 in
+		-h)
+			# Show help
+			Help
+			;;
+		-y)
+			yes=true
+			;;
+		*)
+			WrongOption=$1
+			;;
+	esac
+	shift
+done
+
+if [[ "$WrongOption" != "" ]] || [[ "$@" != "" ]]; then
+	SendNotification "mp42mkv: invalid option -- $WrongOption $@\nTry “mp42mkv -h” for more information.";
+	exit 3;
+fi
 
 for f in $(ls *.{avi,mp4} 2>/dev/null); do
 	# We won't convert if no subtitle files with proper filename found for the current movie
@@ -85,7 +113,7 @@ for f in $(ls *.{avi,mp4} 2>/dev/null); do
 			SendNotification "Conversion process of movie “${f%.*}” done" face-smile;
 		}
 		if [ -t 0 ]; then
-			read -p "Do you want to delete the converted files? [Y/n]: " ANS;
+			$yes || read -p "Do you want to delete the converted files? [Y/n]: " ANS;
 			[[ ${ANS:-Y} == [Yy] ]] && rm -vf "${f%.*}"*.{avi,mp4,srt};
 		else
 			rm -f "${f%.*}"*.{avi,mp4,srt};
@@ -97,8 +125,7 @@ done
 	rm -vf /tmp/mkvoptionsfile
 	SendNotification "\nAll conversion processes have finished.
 $(( ConvWarn + ConvOkay )) movie(s) converted to MKV.
-${ConvWarn} of them with warnings.
-${ConvOkay} of them were done OK." face-angel;
+${ConvWarn} of them with warnings and ${ConvOkay} of them were done OK." face-angel;
 } || {
 	SendNotification "None AVI or MP4 file found to convert." face-uncertain;
 	exit 1;
