@@ -53,7 +53,7 @@ for f in $(ls *.{avi,mp4} 2>/dev/null); do
 	[[ -f "${f%.*}".${ALTERLANG[0,0]}.srt ]] && {
 		[[ -z $(file -bi "${f%.*}".${ALTERLANG[0,0]}.srt | grep "utf-8" 2>/dev/null) ]] && {
 			# We must convert subtitles file to utf-8 first
-			echo -e "Converting sub file ${f%.*}.${ALTERLANG[0,0]}.srt to “utf-8”";
+			echo -e "Converting subtitle file ${f%.*}.${ALTERLANG[0,0]}.srt to “utf-8”";
 			mv "${f%.*}".${ALTERLANG[0,0]}.srt "${f%.*}".${ALTERLANG[0,0]}.srt.ansi;
 			iconv -f WINDOWS-1253 -t UTF8 -o "${f%.*}".${ALTERLANG[0,0]}.srt "${f%.*}".${ALTERLANG[0,0]}.srt.ansi;
 			rm -f "${f%.*}".${ALTERLANG[0,0]}.srt.ansi;
