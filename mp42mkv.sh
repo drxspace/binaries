@@ -55,8 +55,11 @@ for f in $(ls *.{avi,mp4} 2>/dev/null); do
 			# We must convert subtitles file to utf-8 first
 			echo -e "Converting subtitle file ${f%.*}.${ALTERLANG[0,0]}.srt to “utf-8”";
 			mv "${f%.*}".${ALTERLANG[0,0]}.srt "${f%.*}".${ALTERLANG[0,0]}.srt.ansi;
-			iconv -f WINDOWS-1253 -t UTF8 -o "${f%.*}".${ALTERLANG[0,0]}.srt "${f%.*}".${ALTERLANG[0,0]}.srt.ansi;
-			rm -f "${f%.*}".${ALTERLANG[0,0]}.srt.ansi;
+			iconv -f WINDOWS-1253 -t UTF8 -o "${f%.*}".${ALTERLANG[0,0]}.srt "${f%.*}".${ALTERLANG[0,0]}.srt.ansi && rm -f "${f%.*}".${ALTERLANG[0,0]}.srt.ansi || {
+				mv "${f%.*}".${ALTERLANG[0,0]}.srt.ansi "${f%.*}".${ALTERLANG[0,0]}.srt;
+				SendNotification "Problems with the conversion process of subtitle file ${f%.*}.${ALTERLANG[0,0]}.srt to “utf-8”" face-worried;
+				exit 2;
+			}
 		}
 		LANGSPARAMS=${LANGSPARAMS}"--sub-charset\n0:UTF-8\n--language\n0:${ALTERLANG[0,1]}\n--track-name\n0:${ALTERLANG[0,2]}\n(\n""${f%.*}.${ALTERLANG[0,0]}.srt""\n)\n";
 	}
