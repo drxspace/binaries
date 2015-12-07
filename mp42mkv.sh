@@ -18,14 +18,6 @@ Undot() {
 	echo -n "${1//./ }";
 }
 
-SendNotification() {
-	if [ -t 0 ]; then
-		echo -e "$1";
-	else
-		notify-send "MP4 to MKV convertor" "$1" -i $2;
-	fi
-}
-
 ConvTotal=0
 ConvError=0
 ConvWarn=0
@@ -58,14 +50,14 @@ while [[ "$1" == -* ]]; do
 done
 
 if [[ "$WrongOption" != "" ]] || [[ "$@" != "" ]]; then
-	SendNotification "mp42mkv: invalid option -- $WrongOption $@\nTry “mp42mkv -h” for more information.";
+	echo -e "mp42mkv: invalid option -- $WrongOption $@\nTry “mp42mkv -h” for more information.";
 	exit 3;
 fi
 
 for f in $(ls *.{avi,mp4} 2>/dev/null); do
 	# We won't convert if no subtitle files with proper filename found for the current movie
 	[[ -z $(ls "${f%.*}".{en,${ALTERLANG[0,0]}}.srt 2>/dev/null) ]] && {
-		SendNotification "No subtitle files with proper filename found for the movie “${f%.*}”" face-embarrassed;
+		echo -e "No subtitle files with proper filename found for the movie “${f%.*}”";
 		continue;
 	}
 
@@ -85,7 +77,7 @@ for f in $(ls *.{avi,mp4} 2>/dev/null); do
 			mv "${f%.*}".${ALTERLANG[0,0]}.srt "${f%.*}".${ALTERLANG[0,0]}.srt.ansi;
 			iconv -f WINDOWS-1253 -t UTF8 -o "${f%.*}".${ALTERLANG[0,0]}.srt "${f%.*}".${ALTERLANG[0,0]}.srt.ansi && rm -f "${f%.*}".${ALTERLANG[0,0]}.srt.ansi || {
 				mv "${f%.*}".${ALTERLANG[0,0]}.srt.ansi "${f%.*}".${ALTERLANG[0,0]}.srt;
-				SendNotification "Problems with the conversion process of subtitle file ${f%.*}.${ALTERLANG[0,0]}.srt to “utf-8”" face-worried;
+				echo -e "Problems with the conversion process of subtitle file ${f%.*}.${ALTERLANG[0,0]}.srt to “utf-8”";
 				exit 2;
 			}
 		}
@@ -103,14 +95,14 @@ for f in $(ls *.{avi,mp4} 2>/dev/null); do
 
 	[[ $RetCode -gt 1 ]] && {
 		: $(( ConvError++ ));
-		SendNotification "Problems with the conversion process of movie “${f%.*}”" face-worried;
+		echo -e "Problems with the conversion process of movie “${f%.*}”";
 	} || {
 		[[ $RetCode -eq 1 ]] && {
 			: $(( ConvWarn++ ));
-			SendNotification "Conversion process of movie “${f%.*}” done with warnings" face-plain;
+			echo -e "Conversion process of movie “${f%.*}” done with warnings";
 		} || {
 			: $(( ConvOkay++ ));
-			SendNotification "Conversion process of movie “${f%.*}” done" face-smile;
+			echo -e "Conversion process of movie “${f%.*}” done" face-smile;
 		}
 		if [ -t 0 ]; then
 			$yes || read -p "Do you want to delete the converted files? [Y/n]: " ANS;
@@ -123,11 +115,11 @@ done
 
 [[ $ConvTotal -gt 0 ]] && {
 	rm -vf /tmp/mkvoptionsfile
-	SendNotification "\nAll conversion processes have finished.
+	echo -e "\nAll conversion processes have finished.
 $(( ConvWarn + ConvOkay )) movie(s) converted to MKV.
-${ConvWarn} of them with warnings and ${ConvOkay} of them were done OK." face-angel;
+${ConvWarn} of them with warnings and ${ConvOkay} of them were done OK.";
 } || {
-	SendNotification "None AVI or MP4 file found to convert." face-uncertain;
+	echo -e "None AVI or MP4 file found to convert.";
 	exit 1;
 }
 
