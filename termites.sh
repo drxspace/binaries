@@ -13,10 +13,10 @@ if [[ $EUID -ne 0 ]]; then
 fi
 
 gawk -i inplace 'BEGIN { occurs = 0 } 
-                 /^Exec=terminator$/ { 
+                 /^Exec=terminator/ { 
                    occurs++; 
                    if (occurs == 1) 
-                     gsub(/terminator.*/, "terminator --geometry=960x540+0-72"); 
+                     gsub(/terminator.*/, "terminator --geometry=960x540+0-96"); 
                    else if (occurs == 2) 
                      gsub(/terminator.*/, "terminator --geometry=720x405-0-0"); 
                  }
