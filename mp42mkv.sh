@@ -24,6 +24,7 @@ ConvWarn=0
 ConvOkay=0
 WrongOption=""
 yes=false
+no=false
 
 INPUTPARAMS=""
 IFS=$'\n\b'
@@ -42,6 +43,9 @@ while [[ "$1" == -* ]]; do
 		-y)
 			yes=true
 			;;
+		-n)
+			no=true
+			;;
 		*)
 			WrongOption=$1
 			;;
@@ -49,11 +53,20 @@ while [[ "$1" == -* ]]; do
 	shift
 done
 
+# Check for option error
 if [[ "$WrongOption" != "" ]] || [[ "$@" != "" ]]; then
 	echo -e "mp42mkv: invalid option -- $WrongOption $@\nTry “mp42mkv -h” for more information.";
 	exit 3;
 fi
+if $yes && $no; then
+	echo -e "mp42mkv: invalid option coexistence\nTry “mp42mkv -h” for more information.";
+	exit 4;
+fi
 
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
+#
+# main of script
+#
 for f in $(ls *.{avi,mp4} 2>/dev/null); do
 	# We won't convert if no subtitle files with proper filename found for the current movie
 	[[ -z $(ls "${f%.*}".{en,${ALTERLANG[0,0]}}.srt 2>/dev/null) ]] && {
@@ -104,12 +117,8 @@ for f in $(ls *.{avi,mp4} 2>/dev/null); do
 			: $(( ConvOkay++ ));
 			echo -e "Conversion process of movie “${f%.*}” done" face-smile;
 		}
-		if [ -t 0 ]; then
-			$yes || read -p "Do you want to delete the converted files? [Y/n]: " ANS;
-			[[ ${ANS:-Y} == [Yy] ]] && rm -vf "${f%.*}"*.{avi,mp4,srt};
-		else
-			rm -f "${f%.*}"*.{avi,mp4,srt};
-		fi
+		{ $yes || $no; } || read -p "Do you want to delete the converted files? [Y/n]: " ANS;
+		[[ ${ANS:-Y} == [Yy] ]] && { $no || rm -vf "${f%.*}"*.{avi,mp4,srt}; }
 	}
 done
 
@@ -117,7 +126,7 @@ done
 	rm -vf /tmp/mkvoptionsfile
 	echo -e "\nAll conversion processes have finished.
 $(( ConvWarn + ConvOkay )) movie(s) converted to MKV.
-${ConvWarn} of them with warnings and ${ConvOkay} of them were done OK.";
+${ConvWarn} of them gave warnings and ${ConvOkay} of them were done just fine.";
 } || {
 	echo -e "None AVI or MP4 file found to convert.";
 	exit 1;
