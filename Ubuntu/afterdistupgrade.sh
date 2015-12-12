@@ -92,7 +92,7 @@ nRepos=$(wc -l < /tmp/wantupg.lst)
 
 if [[ $nRepos -gt 0 ]]; then
 	echo -en "\e[1;34m::\e[0;34m There are $nRepos repositories that I'll try to re-enable.\n   Please wait for this process to complete...";
-	notify-send "Re-enable Repositories" "\nThere are $nRepos repositories that I'll try to re-enable.\nPlease wait for this process to complete..." -i face-wink;
+	notify-send -h int:transient:1 -t 10000 -u normal -i face-wink "Re-enable Repositories" "\nThere are $nRepos repositories that I'll try to re-enable.\nPlease wait for this process to complete...";
 	$(${StartSnd});
 
 	for PPAfn in $(cat /tmp/wantupg.lst); do
@@ -103,7 +103,7 @@ if [[ $nRepos -gt 0 ]]; then
 		if [[ $return_val -eq 1 ]]; then
 			: $(( nNewRepos++ ));
 			$Verbose && echo -en "\e[1;32m\n++ Re-enabled repository's URL: $PPAurl";
-			notify-send "Re-enable Repositories" "\n$(getPPAsName "$PPAfn") repository was re-enabled" -i face-smile;
+			notify-send -h int:transient:1 -t 10000 -u normal -i face-smile "Re-enable Repositories" "\n$(getPPAsName "$PPAfn") repository was re-enabled";
 			$(${FoundSnd});
 			echo $PPAfn >> /tmp/wantupg.new-lst;
 		fi;
@@ -117,15 +117,15 @@ rm -f /tmp/wantupg.*
 
 if [[ $nRepos -eq 0 ]]; then
 	echo -e "\e[0mThere are no repositories to re-enable. Bye!"
-	notify-send "Re-enable Repositories" "\nThere are no repositories to re-enable. Bye!" -i face-smirk;
+	notify-send -h int:transient:1 -t 10000 -u normal -i face-smirk "Re-enable Repositories" "\nThere are no repositories to re-enable. Bye!";
 	$(${NoneSnd});
 elif [[ $nNewRepos -gt 0 ]]; then
 	echo -e "\e[0m\n\nDone. $nNewRepos repositories were re-enabled.";
-	notify-send "Re-enable Repositories" "\n$nNewRepos repositories were re-enabled" -i face-cool;
+	notify-send -h int:transient:1 -t 10000 -u normal -i face-cool "Re-enable Repositories" "\n$nNewRepos repositories were re-enabled";
 	$(${HappySnd});
 else # $nRepos -gt 0 && $nNewRepos -eq 0
 	echo -e "\e[0m\n\nDone. None of the repositories was re-enabled.";
-	notify-send "Re-enable Repositories" "\nNone of the repositories was re-enabled" -i face-worried;
+	notify-send -h int:transient:1 -t 10000 -u normal -i face-worried "Re-enable Repositories" "\nNone of the repositories was re-enabled";
 	$(${UnhappySnd});
 fi
 
