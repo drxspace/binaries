@@ -10,7 +10,7 @@
 #set -x
 
 Help() {
-  echo -e "mp42mkv: Showing help...";
+  echo -e "mp42mkv: Showing help ... as always empty";
   exit 20;
 }
 
@@ -29,7 +29,7 @@ no=false
 INPUTPARAMS=""
 IFS=$'\n\b'
 
-noLANGUAGES=2
+NoLANGUAGES=2
 declare -A LANGUAGES
 # Enter your prefered language first to be set as the default
 LANGUAGES[0,0]="el"
@@ -88,10 +88,10 @@ for f in ${FileArg}; do
   INPUTPARAMS="--language\n0:und\n--language\n1:und\n(\n${f}\n)\n"
 
   LANGSPARAMS=""
+  # We won't convert if no proper subtitle file(s) found for the current movie
   WontConvert=true;
-  for ((k=0; k < noLANGUAGES ; k++)); do
+  for ((k=0; k < NoLANGUAGES ; k++)); do
     [[ -f "${f%.*}".${LANGUAGES[${k},0]}.srt ]] && {
-      WontConvert=false;
       # Check if we must convert subtitles file to utf-8 first
       [[ -z $(file -bi "${f%.*}".${LANGUAGES[${k},0]}.srt | grep "utf-8" 2>/dev/null) ]] && {
         echo -e "Converting subtitle file ${f%.*}.${LANGUAGES[${k},0]}.srt to “utf-8”";
@@ -102,13 +102,13 @@ for f in ${FileArg}; do
           continue;
         }
       }
+      WontConvert=false;
       LANGSPARAMS=${LANGSPARAMS}"--sub-charset\n0:UTF-8\n--language\n0:${LANGUAGES[${k},1]}\n--track-name\n0:${LANGUAGES[${k},2]}\n(\n""${f%.*}.${LANGUAGES[${k},0]}.srt""\n)\n";
     }
   done
 
-  # We won't convert if no proper subtitle file(s) found for the current movie
   $WontConvert && {
-    echo -e "\e[0;30m\e[45mNone proper subtitle file(s) found for the movie “${f}”\e[0m";
+    echo -e "\e[1;33m\e[41mNone proper subtitle file(s) found for the movie “${f}”\e[0m";
     continue;
   }
 
@@ -123,11 +123,11 @@ for f in ${FileArg}; do
 
   [[ $RetCode -gt 1 ]] && {
     : $(( ConvError++ ));
-    echo -e "\e[0;30m\e[45mProblems with the conversion process of the movie “${f}”\e[0m";
+    echo -e "\e[1;33m\e[41mProblems with the conversion process of the movie “${f}”\e[0m";
   } || {
     [[ $RetCode -eq 1 ]] && {
       : $(( ConvWarn++ ));
-      echo -e "\e[0;94mConversion process of the movie “${f}” done with warnings\e[0m";
+      echo -e "\e[0;94mConversion process of the movie “${f}” done with warning(s)\e[0m";
     } || {
       : $(( ConvOkay++ ));
       echo -e "\e[0;92mConversion process of the movie “${f}” done okay\e[0m";
@@ -142,7 +142,7 @@ if [[ $ConvTried -gt 0 ]]; then
   echo -e "\nAll conversion processes have finished.
 Tried $ConvTried movie(s).
 $(( ConvWarn + ConvOkay )) movie(s) converted to MKV.
-$ConvWarn gave warnings and $ConvOkay done just fine.";
+$ConvWarn movie(s) gave warning(s) and $ConvOkay done just fine.";
   [[ $ConvError -gt 0 ]] && echo -e "$ConvError movie(s) aborted.";
 else
   echo -e "\nNo AVI nor MP4 file found to convert.\e[0m";
