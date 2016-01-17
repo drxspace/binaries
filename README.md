@@ -17,6 +17,7 @@ sudo apt-get install
 	sudo -v
 	sudo cp -fv getkey.sh /usr/local/bin/getkey
 	cp -fv getkey.desktop $HOME/Desktop/
+	sudo cp -fv guvok.sh /usr/local/bin/guvok
 	sudo cp -fv mp42mkv.sh /usr/local/bin/mp42mkv
 	sudo cp -fv termites.sh /usr/local/bin/termites
 	sudo cp -fv vboxtestbuild.sh /usr/local/bin/vboxtestbuild
@@ -69,6 +70,7 @@ su -c '
 	sudo -v
 	sudo rm -fv /usr/local/bin/getkey
 	rm -fv $HOME/Desktop/
+	sudo rm -fv /usr/local/bin/guvok
 	sudo rm -fv /usr/local/bin/mp42mkv
 	sudo rm -fv /usr/local/bin/termites
 	sudo rm -fv /usr/local/bin/vboxtestbuild
