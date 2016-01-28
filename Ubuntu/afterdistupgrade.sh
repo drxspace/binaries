@@ -56,10 +56,10 @@ fi
 	UnhappySnd=${StartSnd};
 }
 
-Verbose=true
 nRepos=0
 nNewRepos=0
 ReleaseCodename="$(lsb_release -cs)"
+if [ -t 0 ]; then Terminal=true; else Terminal=false; fi
 
 makeURL() {
 	local url="$(sed -n -e 's/^# deb[[:space:]]//' -e "s/[[:space:]]*# disabled on upgrade to $(echo ${ReleaseCodename})//gp" "$1")";
@@ -80,7 +80,6 @@ getPPAsName() {
 	echo -n "$(cat "$1" | grep -E "^# deb[[:space:]]" | cut -d\/ -f4)";
 }
 
-
 exlock_now || {
 	echo -e "\e[1m(!)\e[0m This script is already running\n    Please try again later..." 1>&2;
 	$(${WarnSnd});
@@ -91,19 +90,21 @@ grep -lE "[[:space:]]*# disabled on upgrade to $(echo ${ReleaseCodename})" /etc/
 nRepos=$(wc -l < /tmp/wantupg.lst)
 
 if [[ $nRepos -gt 0 ]]; then
-	echo -en "\e[1;34m::\e[0;34m There are $nRepos repositories that I'll try to re-enable.\n   Please wait for this process to complete...";
-	notify-send -h int:transient:1 -t 10000 -u normal -i face-wink "Re-enable Repositories" "\nThere are $nRepos repositories that I'll try to re-enable.\nPlease wait for this process to complete...";
-	$(${StartSnd});
+	$Terminal && echo -en "\e[1;34m::\e[0;34m There are $nRepos repositories that I'll try to re-enable.\n   Please wait for this process to complete..." || {
+		notify-send -h int:transient:1 -t 10000 -u normal -i face-wink "Re-enable Repositories" "\nThere are $nRepos repositories that I'll try to re-enable.\nPlease wait for this process to complete...";
+		$(${StartSnd});
+	}
 
 	for PPAfn in $(cat /tmp/wantupg.lst); do
 		PPAurl=$(makeURL "$PPAfn");
-		$Verbose && echo -en "\e[0m\n-  URL in process: $PPAurl";
+		$Terminal && echo -en "\e[0m\n-  URL in process: $PPAurl";
 		PPAisOK "$PPAurl";
 		return_val=$?;
 		if [[ $return_val -eq 1 ]]; then
 			: $(( nNewRepos++ ));
-			$Verbose && echo -en "\e[1;32m\n++ Re-enabled repository's URL: $PPAurl";
-			notify-send -h int:transient:1 -t 10000 -u normal -i face-smile "Re-enable Repositories" "\n$(getPPAsName "$PPAfn") repository was re-enabled";
+			$Terminal && echo -en "\e[1;32m\n++ Re-enabled repository's URL: $PPAurl" || {
+				notify-send -h int:transient:1 -t 10000 -u normal -i face-smile "Re-enable Repositories" "\n$(getPPAsName "$PPAfn") repository was re-enabled";
+			}
 			$(${FoundSnd});
 			echo $PPAfn >> /tmp/wantupg.new-lst;
 		fi;
@@ -112,22 +113,25 @@ if [[ $nRepos -gt 0 ]]; then
 	[[ -f /tmp/wantupg.new-lst ]] && cat /tmp/wantupg.new-lst | xargs -n1 sed -i -e 's/^# deb[[:space:]]/deb /' -e "s/[[:space:]]*# disabled on upgrade to $(echo ${ReleaseCodename})//g";
 fi
 
+if [[ $nRepos -eq 0 ]]; then
+	$Terminal && echo -e "\e[0mThere are no repositories to re-enable. Bye!" || {
+		notify-send -h int:transient:1 -t 10000 -u normal -i face-smirk "Re-enable Repositories" "\nThere are no repositories to re-enable. Bye!";
+		$(${NoneSnd});
+	}
+elif [[ $nNewRepos -gt 0 ]]; then
+	$Terminal && echo -e "\e[0m\n\nDone. $nNewRepos repositories were re-enabled." || {
+		notify-send -h int:transient:1 -t 10000 -u normal -i face-cool "Re-enable Repositories" "\n$nNewRepos repositories were re-enabled";
+		$(${HappySnd});
+	}
+else # $nRepos -gt 0 && $nNewRepos -eq 0
+	$Terminal && echo -e "\e[0m\n\nDone. None of the repositories was re-enabled." || {
+		notify-send -h int:transient:1 -t 10000 -u normal -i face-worried "Re-enable Repositories" "\nNone of the repositories was re-enabled";
+		$(${UnhappySnd});
+	}
+fi
+
 # Do some cleaning
 rm -f /tmp/wantupg.*
-
-if [[ $nRepos -eq 0 ]]; then
-	echo -e "\e[0mThere are no repositories to re-enable. Bye!"
-	notify-send -h int:transient:1 -t 10000 -u normal -i face-smirk "Re-enable Repositories" "\nThere are no repositories to re-enable. Bye!";
-	$(${NoneSnd});
-elif [[ $nNewRepos -gt 0 ]]; then
-	echo -e "\e[0m\n\nDone. $nNewRepos repositories were re-enabled.";
-	notify-send -h int:transient:1 -t 10000 -u normal -i face-cool "Re-enable Repositories" "\n$nNewRepos repositories were re-enabled";
-	$(${HappySnd});
-else # $nRepos -gt 0 && $nNewRepos -eq 0
-	echo -e "\e[0m\n\nDone. None of the repositories was re-enabled.";
-	notify-send -h int:transient:1 -t 10000 -u normal -i face-worried "Re-enable Repositories" "\nNone of the repositories was re-enabled";
-	$(${UnhappySnd});
-fi
 
 unlock
 
