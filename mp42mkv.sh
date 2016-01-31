@@ -139,13 +139,14 @@ done
 
 if [[ $ConvTried -gt 0 ]]; then
   rm -f /tmp/mkvoptionsfile
-  echo -e "\nAll conversion processes have finished.
+  echo -e "--
+All conversion processes have finished.
 Tried $ConvTried movie(s).
 $(( ConvWarn + ConvOkay )) movie(s) converted to MKV.
 $ConvWarn movie(s) gave warning(s) and $ConvOkay done just fine.";
   [[ $ConvError -gt 0 ]] && echo -e "$ConvError movie(s) aborted.";
 else
-  echo -e "\nNo AVI nor MP4 file found to convert.\e[0m";
+  echo -e "mp42mkv: No AVI nor MP4 file found to convert.";
   exit 1;
 fi
 
