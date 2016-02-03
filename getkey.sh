@@ -13,7 +13,7 @@
 	exit 1;
 }
 [[ $(which xsel 2>/dev/null) ]] || {
-	notify-send "Copy me that key" "I couldn't copy that key.\n‘yad’ command is missing." -i face-sad;
+	notify-send "Copy me that key" "I couldn't copy that key.\n‘xsel’ command is missing." -i face-sad;
 	exit 2;
 }
 
