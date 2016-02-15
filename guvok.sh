@@ -12,6 +12,6 @@ if [[ $EUID -ne 0 ]]; then
 	exec $(which sudo) "$0"
 fi
 
-sed -i 's|^Exec=guvcview$|#Exec=guvcview\n#Exec=guvcview -d /dev/video0\nExec=guvcview -d /dev/video1|' /usr/share/applications/guvcview.desktop && echo "guvok: Injection okay." || echo "guvok: Injection failed..."
+sed -i 's|^Exec=guvcview$|#Exec=guvcview\n#Exec=guvcview -d /dev/video0\nExec=guvcview -d /dev/video1|' /usr/share/applications/guvcview.desktop && echo "guvok: Injection's okay." || echo "guvok: Injection failed..."
 
 exit 0
