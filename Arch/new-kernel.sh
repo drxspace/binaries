@@ -19,8 +19,8 @@ fi
 
 [[ -x $(which virtualbox 2>/dev/null) ]] && {
 	echo -e "\n:: \033[1mVirtualBox...\033[0m\n"
-	dkms install vboxhost/$(pacman -Q virtualbox|awk {'print $2'}|sed 's/\-.\+//') -k $(uname -rm|sed 's/\ /\//')
-	dkms install vboxguest/$(pacman -Q virtualbox|awk {'print $2'}|sed 's/\-.\+//') -k $(uname -rm|sed 's/\ /\//')
+	dkms install vboxhost/$(pacman -Q virtualbox|awk {'print $2'}|sed 's/\-.\+/_OSE/') -k $(uname -rm|sed 's/\ /\//')
+	dkms install vboxguest/$(pacman -Q virtualbox|awk {'print $2'}|sed 's/\-.\+/_OSE/') -k $(uname -rm|sed 's/\ /\//')
 }
 
 [[ -x $(which vmware-modconfig 2>/dev/null) ]] && {
