@@ -54,6 +54,7 @@ sudo sh -c '
 gsettings set org.gnome.desktop.interface gtk-theme 'Adapta'
 gsettings set org.gnome.desktop.wm.preferences theme 'Adapta'
 gsettings set org.gnome.metacity theme 'Adapta'
+gsettings set org.gnome.shell.extensions.user-theme name 'Adapta'
 
 popd >/dev/null
 
