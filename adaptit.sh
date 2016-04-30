@@ -8,21 +8,30 @@
 #                                    /_/           drxspace@gmail.com
 #
 
+Help() {
+  echo -e "${0##*/}: Showing help ... as always empty";
+  exit 20;
+}
+
 WrongOption=""
+Theme=false
 Ubuntu=true
 Arch=false
 
 while [[ "$1" == -* ]]; do
   case $1 in
-    -h)
+    -h | --help)
       # Show help
-      #Help
+      Help
       ;;
-    -a)
+    -a | --arch)
       Arch=true ; Ubuntu=false
       ;;
-    -u)
+    -u | --ubuntu)
       Ubuntu=true ; Arch=false
+      ;;
+    -t | --theme)
+      Theme=true
       ;;
      *)
       WrongOption=$1
@@ -33,7 +42,7 @@ done
 
 # Check for option error
 if [[ "$WrongOption" != "" ]]; then
-  echo -e "adaptit: invalid option -- $WrongOption\nTry “adaptit -h” for more information.";
+  echo -e "${0##*/}: invalid option -- $WrongOption\nTry “${0##*/} -h” for more information.";
   exit 10;
 fi
 
@@ -54,7 +63,7 @@ sudo sh -c '
 gsettings set org.gnome.desktop.interface gtk-theme 'Adapta'
 gsettings set org.gnome.desktop.wm.preferences theme 'Adapta'
 gsettings set org.gnome.metacity theme 'Adapta'
-gsettings set org.gnome.shell.extensions.user-theme name 'Adapta'
+$Theme && gsettings set org.gnome.shell.extensions.user-theme name 'Adapta'
 
 popd >/dev/null
 
