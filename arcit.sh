@@ -8,21 +8,30 @@
 #                                    /_/           drxspace@gmail.com
 #
 
+Help() {
+  echo -e "${0##*/}: Showing help ... as always empty";
+  exit 20;
+}
+
 WrongOption=""
+Theme=false
 Ubuntu=true
 Arch=false
 
 while [[ "$1" == -* ]]; do
   case $1 in
-    -h)
+    -h | --help)
       # Show help
-      #Help
+      Help
       ;;
-    -a)
+    -a | --arch)
       Arch=true ; Ubuntu=false
       ;;
-    -u)
+    -u | --ubuntu)
       Ubuntu=true ; Arch=false
+      ;;
+    -t | --theme)
+      Theme=true
       ;;
      *)
       WrongOption=$1
@@ -56,7 +65,7 @@ make clean
 gsettings set org.gnome.desktop.interface gtk-theme 'Arc-Darker'
 gsettings set org.gnome.desktop.wm.preferences theme 'Arc-Darker'
 gsettings set org.gnome.metacity theme 'Arc-Darker'
-gsettings set org.gnome.shell.extensions.user-theme name "Arc"
+$Theme && gsettings set org.gnome.shell.extensions.user-theme name "Arc"
 
 popd >/dev/null
 
