@@ -66,7 +66,7 @@ while [[ -n "$1" ]]; do
       Vertex=true
       ;;
 
-    -d | --adapta)
+    -a | --adapta)
       Adapta=true
       GTKTheme='Adapta'
       UserTheme='Adapta'
@@ -76,12 +76,12 @@ while [[ -n "$1" ]]; do
       GTKTheme='Adapta-Nokto'
       UserTheme='Adapta-Nokto'
       ;;
-    -a | --arc)
+    -r | --arc)
       Arc=true
       GTKTheme='Arc'
       UserTheme='Arc'
       ;;
-    -e | --arc-darker)
+    -d | --arc-darker)
       Arc=true
       GTKTheme='Arc-Darker'
       UserTheme='Arc'
