@@ -19,9 +19,9 @@ Cinnamon=false
 Unity=false
 Disabled=""
 
-ThemeIt=false
+BuildOnly=false
+GTKThemeIt=false
 UserThemeIt=false
-BuildOnlyAll=false
 
 Adapta=false
 Arc=false
@@ -49,12 +49,18 @@ while [[ -n "$1" ]]; do
       Disabled=$Disabled" --disable-unity"
       ;;
 
-    -t | --theme)
+    -s | --user-theme)
       UserThemeIt=true
       ;;
+    -g | --gtk-theme)
+      GTKThemeIt=true
+      ;;
 
-    -b | --build-only-all)
-      BuildOnlyAll=true
+    -b | --build-only)
+      BuildOnly=true
+      ;;
+    -l | --build-only-all)
+      BuildOnly=true
       Adapta=true
       Arc=true
       Vertex=true
@@ -62,31 +68,26 @@ while [[ -n "$1" ]]; do
 
     -d | --adapta)
       Adapta=true
-      ThemeIt=true
       GTKTheme='Adapta'
       UserTheme='Adapta'
       ;;
     -n | --adapta-nokto)
       Adapta=true
-      ThemeIt=true
       GTKTheme='Adapta-Nokto'
       UserTheme='Adapta-Nokto'
       ;;
     -a | --arc)
       Arc=true
-      ThemeIt=true
       GTKTheme='Arc'
       UserTheme='Arc'
       ;;
     -e | --arc-darker)
       Arc=true
-      ThemeIt=true
       GTKTheme='Arc-Darker'
       UserTheme='Arc'
       ;;
     -v | --vertex)
       Vertex=true
-      ThemeIt=true
       GTKTheme='Vertex'
       UserTheme='Vertex'
       ;;
@@ -104,6 +105,10 @@ if [[ "$WrongOption" != "" ]]; then
   exit 10;
 fi
 
+! $Adapta && ! $Arc && ! $Vertex && {
+  echo -e "${0##*/}: Nothing to be done.";
+  exit 3;
+}
 
 echo "Requesting root access if we don't already have it..."
 sudo -v
@@ -141,12 +146,12 @@ if $Vertex; then
 fi
 
 
-! $BuildOnlyAll && $ThemeIt && [[ -n "$GTKTheme" ]] && {
+! $BuildOnly && $GTKThemeIt && [[ -n "$GTKTheme" ]] && {
 	gsettings set org.gnome.desktop.interface gtk-theme "$GTKTheme"
 	gsettings set org.gnome.desktop.wm.preferences theme "$GTKTheme"
 	gsettings set org.gnome.metacity theme "$GTKTheme" 2>/dev/null
 }
-! $BuildOnlyAll && $UserThemeIt && [[ -n "$UserTheme" ]] && gsettings set org.gnome.shell.extensions.user-theme name "$UserTheme"
+! $BuildOnly && $UserThemeIt && [[ -n "$UserTheme" ]] && gsettings set org.gnome.shell.extensions.user-theme name "$UserTheme"
 
 
 popd >/dev/null
