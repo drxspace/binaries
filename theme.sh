@@ -127,7 +127,7 @@ fi
 
 if $Arc; then
 	cd "$HOME"/gitClones/Arc-theme
-	sh autogen.sh --prefix=/usr --disable-dark --disable-xfwm --disable-xfce-notify $(echo $Disabled) --with-gnome=3.20
+	sh autogen.sh --prefix=/usr --disable-dark --disable-xfwm --disable-xfce-notify $(echo $Disabled) --with-gnome=$(awk -F'[<|>]' '/platform/{p=$3}/minor/{m=$3}END{print p"."m}' /usr/share/gnome/gnome-version.xml)
 	sudo sh -c '
 		make uninstall
 		rm -rfv /usr/share/themes/{Arc,Arc-Darker,Arc-Dark}
@@ -137,7 +137,7 @@ fi
 
 if $Vertex; then
 	cd "$HOME"/gitClones/Vertex-theme/
-	sh /autogen.sh --prefix=/usr --disable-dark --disable-light --disable-xfwm $(echo $Disabled) --with-gnome=3.20
+	sh autogen.sh --prefix=/usr --disable-dark --disable-light --disable-xfwm $(echo $Disabled) --with-gnome=$(awk -F'[<|>]' '/platform/{p=$3}/minor/{m=$3}END{print p"."m}' /usr/share/gnome/gnome-version.xml)
 	sudo sh -c '
 		make uninstall
 		rm -rfv /usr/share/themes/{Vertex,Vertex-Dark,Vertex-Light}
