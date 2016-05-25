@@ -123,6 +123,7 @@ if $Adapta; then
 		rm -rfv /usr/share/themes/Adapta
 		make install'
 	make clean 2>/dev/null
+	git clean -d -f
 fi
 
 if $Arc; then
@@ -133,6 +134,7 @@ if $Arc; then
 		rm -rfv /usr/share/themes/{Arc,Arc-Darker,Arc-Dark}
 		make install'
 	make clean 2>/dev/null
+	git clean -d -f
 fi
 
 if $Vertex; then
@@ -143,6 +145,7 @@ if $Vertex; then
 		rm -rfv /usr/share/themes/{Vertex,Vertex-Dark,Vertex-Light}
 		make install'
 	make clean 2>/dev/null
+	git clean -d -f
 fi
 
 
