@@ -23,9 +23,9 @@ declare -a arrSiteVBver
 
 InstallVirtualBox() {
 	local i=$1;
-	local vboxurl="${arrSiteVBlnk[$i]}"; let i+=1;
-	local extpurl="${arrSiteVBlnk[$i]}";
-	
+	let i*=2; local vboxurl="${arrSiteVBlnk[$i]}";
+	let i+=1; local extpurl="${arrSiteVBlnk[$i]}";
+
 	echo "Downloading “${vboxurl##*/}”, please wait...";
 	wget -q --show-progress --progress=bar:force -N -4 -t 1 -O /tmp/${vboxurl##*/} "${vboxurl}";
 	echo "Downloading “${extpurl##*/}”, please wait...";
@@ -61,18 +61,16 @@ ExtPack="vbox-extpack"
 # Latest VirtualBox version now on site
 IFS=$'\n' read -r -d '' -a arrSiteVBlnk <<< "$(lynx -listonly -nonumbers -dump https://www.virtualbox.org/wiki/Testbuilds | sed -n -e /$(echo ${Build})/p -e /$(echo ${ExtPack})/p)"
 #echo "${arrSiteVBlnk[@]}" | tr [:space:] '\n'
-
-# Should I make it greedy or non-greedy?
-#IFS=$'\n' read -r -d '' -a arrSiteVBver <<< "$(echo "${arrSiteVBlnk[@]}" | tr [:space:] '\n' | sed -n "/$(echo ${Build})/s/.*-\(.*\)-.*/\1/p")"
+# How to make it greedy or non-greedy?
 #IFS=$'\n' read -r -d '' -a arrSiteVBver <<< "$(echo "${arrSiteVBlnk[@]}" | tr [:space:] '\n' | sed -n "/$(echo ${Build})/s/.[^-]*-\(.*\)-.*/\1/p")"
 IFS=$'\n' read -r -d '' -a arrSiteVBver <<< "$(echo "${arrSiteVBlnk[@]}" | tr [:space:] '\n' | sed -n "/$(echo ${Build})/s/.*-\(.*\)-.*/\1/p")"
-#echo "${arrSiteVBver[0]}, ${arrSiteVBver[1]}"
+#echo "${arrSiteVBver[0]}, ${arrSiteVBver[1]}, ${arrSiteVBver[2]}"
 
 i=0
 while [ $i -lt ${#arrSiteVBver[@]} ]; do
 	if [ ${arrSiteVBver[$i]} -gt ${CurrVBver} ]; then
-		echo "A newer VirtualBox test build version was found...";
-		echo "${arrSiteVBlnk[$i]}";
+		echo "A newer from current VirtualBox test build version “${CurrVBver}” was found...";
+		echo "${arrSiteVBlnk[$i*2]}";
 		read -p "Do you want to continue installing? [Y/n]: " ANS
 		[[ ${ANS:-Y} == [Yy] ]] && InstallVirtualBox $i
 		break;
@@ -83,9 +81,6 @@ done
 if [ $i -ge ${#arrSiteVBver[@]} ]; then
 	echo "No newer VirtualBox test build version was found.";
 fi
-
-#for (( i=0; i<${#arrSiteVBver[@]}; i++ )); do
-#done
 
 # replace a forked subshell+cat with $(</etc/passwd)
 
