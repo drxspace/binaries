@@ -26,9 +26,9 @@ InstallVirtualBox() {
 	let i*=2; local vboxurl="${arrSiteVBlnk[$i]}";
 	let i+=1; local extpurl="${arrSiteVBlnk[$i]}";
 
-	echo "Downloading “${vboxurl##*/}”, please wait...";
+	echo -e "Downloading “${vboxurl##*/}”, please wait...";
 	wget -q --show-progress --progress=bar:force -N -4 -t 1 -O /tmp/${vboxurl##*/} "${vboxurl}";
-	echo "Downloading “${extpurl##*/}”, please wait...";
+	echo -e "Downloading “${extpurl##*/}”, please wait...";
 	wget -q --show-progress --progress=bar:force -N -4 -t 1 -O /tmp/${extpurl##*/} "${extpurl}";
 	# Request root privileges
 	echo -e "Following processes requires root user privileges.\nRequesting root access if we don't already have it...";
@@ -67,19 +67,25 @@ IFS=$'\n' read -r -d '' -a arrSiteVBver <<< "$(echo "${arrSiteVBlnk[@]}" | tr [:
 #echo "${arrSiteVBver[0]}, ${arrSiteVBver[1]}, ${arrSiteVBver[2]}"
 
 i=0
-while [ $i -lt ${#arrSiteVBver[@]} ]; do
-	if [ ${arrSiteVBver[$i]} -gt ${CurrVBver} ]; then
-		echo "A newer from current VirtualBox test build version “${CurrVBver}” was found...";
-		echo "${arrSiteVBlnk[$i*2]}";
-		read -p "Do you want to continue installing? [Y/n]: " ANS
-		[[ ${ANS:-Y} == [Yy] ]] && InstallVirtualBox $i
-		break;
-	fi;
-	: $(( i+=2 ));
-done
-
-if [ $i -ge ${#arrSiteVBver[@]} ]; then
-	echo "No newer VirtualBox test build version was found.";
+if [ ${CurrVBver} -eq $i ]; then
+	echo -e "VirtualBox wasn't found installed.";
+	echo -e "On site latest version is this: ${arrSiteVBlnk[$i]}";
+	read -p "Do you want to continue installing it? [Y/n]: " ANS
+	[[ ${ANS:-Y} == [Yy] ]] && InstallVirtualBox $i
+else
+	while [ $i -lt ${#arrSiteVBver[@]} ]; do
+		if [ ${arrSiteVBver[$i]} -gt ${CurrVBver} ]; then
+			echo -e "A newer version from current “VirtualBox test build ${CurrVBver}” was found, which is:";
+			echo -e "${arrSiteVBlnk[$i*2]}";
+			read -p "Do you want to continue installing? [Y/n]: " ANS
+			[[ ${ANS:-Y} == [Yy] ]] && InstallVirtualBox $i
+			break;
+		fi;
+		: $(( i+=2 ));
+	done
+	if [ $i -ge ${#arrSiteVBver[@]} ]; then
+		echo -e "No newer VirtualBox test build version was found.";
+	fi
 fi
 
 # replace a forked subshell+cat with $(</etc/passwd)
