@@ -16,9 +16,9 @@ gawk -i inplace 'BEGIN { occurs = 0; }
                  /^Exec=terminator/ {
                    occurs++;
                    if (occurs == 1)
-                     gsub(/^Exec=terminator.*/, "terminator --geometry=960x540+480-96");
+                     gsub(/^Exec=terminator.*/, "Exec=terminator --geometry=960x540+480-96");
                    else if (occurs == 2)
-                     gsub(/^Exec=terminator.*/, "terminator --geometry=720x405-480-0");
+                     gsub(/^Exec=terminator.*/, "Exec=terminator --geometry=720x405-480-0");
                  }
                  { print; }' /usr/share/applications/terminator.desktop && echo "termites: Injection's okay." || echo "termites: Injection failed..."
 ## -v INPLACE_SUFFIX=.bak
