@@ -12,15 +12,15 @@ if [[ $EUID -ne 0 ]]; then
 	exec $(which sudo) "$0"
 fi
 
-gawk -i inplace 'BEGIN { occurs = 0 } 
-                 /^Exec=terminator/ { 
-                   occurs++; 
-                   if (occurs == 1) 
-                     gsub(/terminator.*/, "terminator --geometry=960x540+0-96"); 
-                   else if (occurs == 2) 
-                     gsub(/terminator.*/, "terminator --geometry=720x405-0-0"); 
+gawk -i inplace 'BEGIN { occurs = 0; }
+                 /^Exec=terminator/ {
+                   occurs++;
+                   if (occurs == 1)
+                     gsub(/^Exec=terminator.*/, "terminator --geometry=960x540+480-96");
+                   else if (occurs == 2)
+                     gsub(/^Exec=terminator.*/, "terminator --geometry=720x405-480-0");
                  }
                  { print; }' /usr/share/applications/terminator.desktop && echo "termites: Injection's okay." || echo "termites: Injection failed..."
-## -v INPLACE_SUFFIX=.bak 
+## -v INPLACE_SUFFIX=.bak
 
 exit 0
