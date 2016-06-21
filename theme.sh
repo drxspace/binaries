@@ -120,7 +120,8 @@ pushd . >/dev/null
 
 if $Adapta; then
 	cd "$HOME"/gitClones/Adapta
-	sh autogen.sh
+	sh autogen.sh $(echo $Disabled)
+	make
 	sudo sh -c '
 		make uninstall
 		rm -rfv /usr/share/themes/Adapta*
@@ -132,6 +133,7 @@ fi
 if $Arc; then
 	cd "$HOME"/gitClones/Arc-theme
 	sh autogen.sh --prefix=/usr --disable-dark --disable-xfwm --disable-xfce-notify $(echo $Disabled) --with-gnome=$(awk -F'[<|>]' '/platform/{p=$3}/minor/{m=$3}END{print p"."m}' /usr/share/gnome/gnome-version.xml)
+	make
 	sudo sh -c '
 		make uninstall
 		rm -rfv /usr/share/themes/Arc*
@@ -143,6 +145,7 @@ fi
 if $Vertex; then
 	cd "$HOME"/gitClones/Vertex-theme/
 	sh autogen.sh --prefix=/usr --disable-dark --disable-light --disable-xfwm $(echo $Disabled) --with-gnome=$(awk -F'[<|>]' '/platform/{p=$3}/minor/{m=$3}END{print p"."m}' /usr/share/gnome/gnome-version.xml)
+	make
 	sudo sh -c '
 		make uninstall
 		rm -rfv /usr/share/themes/Vertex*
