@@ -19,7 +19,7 @@ Cinnamon=false
 Unity=false
 Disabled=""
 
-BuildOnly=false
+InstallOnly=false
 GTKThemeIt=false
 UserThemeIt=false
 
@@ -42,6 +42,9 @@ while [[ -n "$1" ]]; do
       Help
       ;;
 
+    -b | --disable-both)
+      Disabled=$Disabled" --disable-cinnamon --disable-unity"
+      ;;
     -c | --cinnamon)
       Disabled=$Disabled" --disable-cinnamon"
       ;;
@@ -56,11 +59,11 @@ while [[ -n "$1" ]]; do
       GTKThemeIt=true
       ;;
 
-    -b | --build-only)
-      BuildOnly=true
+    -i | --install-only)
+      InstallOnly=true
       ;;
-    -l | --build-only-all)
-      BuildOnly=true
+    -l | --install-only-all)
+      InstallOnly=true
       Adapta=true
       Arc=true
       Vertex=true
@@ -120,7 +123,7 @@ if $Adapta; then
 	sh autogen.sh
 	sudo sh -c '
 		make uninstall
-		rm -rfv /usr/share/themes/Adapta
+		rm -rfv /usr/share/themes/Adapta*
 		make install'
 	make clean 2>/dev/null
 	git clean -d -f
@@ -131,7 +134,7 @@ if $Arc; then
 	sh autogen.sh --prefix=/usr --disable-dark --disable-xfwm --disable-xfce-notify $(echo $Disabled) --with-gnome=$(awk -F'[<|>]' '/platform/{p=$3}/minor/{m=$3}END{print p"."m}' /usr/share/gnome/gnome-version.xml)
 	sudo sh -c '
 		make uninstall
-		rm -rfv /usr/share/themes/{Arc,Arc-Darker,Arc-Dark}
+		rm -rfv /usr/share/themes/Arc*
 		make install'
 	make clean 2>/dev/null
 	git clean -d -f
@@ -142,19 +145,19 @@ if $Vertex; then
 	sh autogen.sh --prefix=/usr --disable-dark --disable-light --disable-xfwm $(echo $Disabled) --with-gnome=$(awk -F'[<|>]' '/platform/{p=$3}/minor/{m=$3}END{print p"."m}' /usr/share/gnome/gnome-version.xml)
 	sudo sh -c '
 		make uninstall
-		rm -rfv /usr/share/themes/{Vertex,Vertex-Dark,Vertex-Light}
+		rm -rfv /usr/share/themes/Vertex*
 		make install'
 	make clean 2>/dev/null
 	git clean -d -f
 fi
 
 
-! $BuildOnly && $GTKThemeIt && [[ -n "$GTKTheme" ]] && {
+! $InstallOnly && $GTKThemeIt && [[ -n "$GTKTheme" ]] && {
 	gsettings set org.gnome.desktop.interface gtk-theme "$GTKTheme"
 	gsettings set org.gnome.desktop.wm.preferences theme "$GTKTheme"
 	gsettings set org.gnome.metacity theme "$GTKTheme" 2>/dev/null
 }
-! $BuildOnly && $UserThemeIt && [[ -n "$UserTheme" ]] && gsettings set org.gnome.shell.extensions.user-theme name "$UserTheme"
+! $InstallOnly && $UserThemeIt && [[ -n "$UserTheme" ]] && gsettings set org.gnome.shell.extensions.user-theme name "$UserTheme"
 
 
 popd >/dev/null
