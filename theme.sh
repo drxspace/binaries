@@ -131,7 +131,7 @@ if $Adapta; then
 fi
 
 if $Arc; then
-	cd "$HOME"/gitClones/Arc-theme
+	cd "$HOME"/gitClones/[A,a]rc-theme
 	sh autogen.sh --prefix=/usr --disable-dark --disable-xfwm --disable-xfce-notify $(echo $Disabled) --with-gnome=$(awk -F'[<|>]' '/platform/{p=$3}/minor/{m=$3}END{print p"."m}' /usr/share/gnome/gnome-version.xml)
 	make
 	sudo sh -c '
@@ -143,7 +143,7 @@ if $Arc; then
 fi
 
 if $Vertex; then
-	cd "$HOME"/gitClones/Vertex-theme/
+	cd "$HOME"/gitClones/[V,v]ertex-theme/
 	sh autogen.sh --prefix=/usr --disable-dark --disable-light --disable-xfwm $(echo $Disabled) --with-gnome=$(awk -F'[<|>]' '/platform/{p=$3}/minor/{m=$3}END{print p"."m}' /usr/share/gnome/gnome-version.xml)
 	make
 	sudo sh -c '
