@@ -57,9 +57,9 @@ if [[ "$WrongOption" != "" ]] || [[ -z ${AsFile} ]]; then
   exit 10;
 fi
 
-entries=($(cat ${AsFile} | awk 'BEGIN { FS=":"; entry = ""; sep = "\t"; }
-                               { entry = entry $1 sep; };
-                               END { print entry; }'))
+entries=($(awk 'BEGIN { FS=":"; entry = ""; sep = "\t"; }
+                { entry = entry $1 sep; };
+                END { print entry; }'  ${AsFile}))
 AKey=$(yad --center --width=300 --entry --title="${TitleBar}" \
     --image=document-send \
     --button="gtk-ok:0" --button="gtk-cancel:1" \
