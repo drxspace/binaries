@@ -5,7 +5,7 @@
 ### Debian
 
 ```bash
-sudo apt-get install 
+sudo apt-get install yad xsel
 
 ```
 
@@ -20,7 +20,8 @@ sudo apt-get install
 
 ```bash
 	cp -fv getkey.desktop $HOME/Desktop/
-	sudo cp -fv getkey.sh /usr/local/bin/getkey
+	cp -fv getpb.desktop $HOME/Desktop/
+	sudo cp -fv sendclip.sh /usr/local/bin/sendclip
 	sudo cp -fv guvok.sh /usr/local/bin/guvok
 	sudo cp -fv mp42mkv.sh /usr/local/bin/mp42mkv
 	sudo cp -fv termites.sh /usr/local/bin/termites
@@ -77,7 +78,8 @@ sudo su -c '
 
 ```bash
 	rm -fv $HOME/Desktop/getkey.desktop
-	sudo rm -fv /usr/local/bin/getkey
+	rm -fv $HOME/Desktop/getpb.desktop
+	sudo rm -fv /usr/local/bin/sendclip
 	sudo rm -fv /usr/local/bin/guvok
 	sudo rm -fv /usr/local/bin/mp42mkv
 	sudo rm -fv /usr/local/bin/termites
