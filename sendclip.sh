@@ -23,7 +23,7 @@ Help() {
 }
 
 WrongOption=""
-NoOptions=true
+AsFile=""
 
 KeysFile="$HOME/Documents/keys.txt"
 PhonesFile="$HOME/Documents/phonebook.txt"
@@ -33,19 +33,16 @@ while [[ "$1" == -* ]]; do
     -h | --help)
       # Show help
       Help
-      NoOptions=false
       ;;
     -k | --key)
       AsFile="$KeysFile"
       TitleBar="Copy me that key"
       Label="Choose key:"
-      NoOptions=false
       ;;
     -p | --phone)
       AsFile="$PhonesFile"
       TitleBar="Copy me that phone number"
       Label="Choose a name:"
-      NoOptions=false
       ;;
      *)
       WrongOption=$1
@@ -55,7 +52,7 @@ while [[ "$1" == -* ]]; do
 done
 
 # Check for option error
-if [[ "$WrongOption" != "" ]] || ${NoOptions}; then
+if [[ "$WrongOption" != "" ]] || [[ -z ${AsFile} ]]; then
   echo -e "sendclip: invalid option -- ${WrongOption}\nTry “sendclip -h” for more information.";
   exit 10;
 fi
@@ -63,9 +60,6 @@ fi
 entries=($(cat ${AsFile} | awk 'BEGIN { FS=":"; entry = ""; sep = "\t"; }
                                { entry = entry $1 sep; };
                                END { print entry; }'))
-
-echo ${entries[*]}
-
 AKey=$(yad --center --width=300 --entry --title="${TitleBar}" \
     --image=document-send \
     --button="gtk-ok:0" --button="gtk-cancel:1" \
