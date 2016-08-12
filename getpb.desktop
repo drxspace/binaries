@@ -1,0 +1,11 @@
+[Desktop Entry]
+Version=1.0
+Name=Copy me that phone number
+GenericName=Copy me that phone number
+Comment=Copy to clipboard a phone number
+Exec=sendclip --phone
+Terminal=false
+Type=Application
+Categories=Applications;
+Icon=internet-telephony
+StartupNotify=true
