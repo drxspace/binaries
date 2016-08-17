@@ -26,9 +26,9 @@ InstallVirtualBox() {
 	let i*=2; local vboxurl="${arrSiteVBlnk[$i]}";
 	let i+=1; local extpurl="${arrSiteVBlnk[$i]}";
 
-	echo -e "Downloading “${vboxurl##*/}”, please wait...";
+	echo -e "Downloading “\e[1;32m${vboxurl##*/}\e[0m”, please wait...";
 	wget -q --show-progress --progress=bar:force -N -4 -t 1 -O /tmp/${vboxurl##*/} "${vboxurl}";
-	echo -e "Downloading “${extpurl##*/}”, please wait...";
+	echo -e "Downloading “\e[1;32m${extpurl##*/}\e[0m”, please wait...";
 	wget -q --show-progress --progress=bar:force -N -4 -t 1 -O /tmp/${extpurl##*/} "${extpurl}";
 	# Request root privileges
 	echo -e "Following processes requires root user privileges.\nRequesting root access if we don't already have it...";
@@ -75,7 +75,7 @@ if [ ${CurrVBver} -eq $i ]; then
 else
 	while [ $i -lt ${#arrSiteVBver[@]} ]; do
 		if [ ${arrSiteVBver[$i]} -gt ${CurrVBver} ]; then
-			echo -e "A newer version from current “VirtualBox test build ${CurrVBver}” was found, which is:";
+			echo -e "A newer version from current “VirtualBox test build \e[1;31m${CurrVBver}\e[0m” was found, which is:";
 			echo -e "${arrSiteVBlnk[$i*2]}";
 			read -p "Do you want to continue installing? [Y/n]: " ANS
 			[[ ${ANS:-Y} == [Yy] ]] && InstallVirtualBox $i
