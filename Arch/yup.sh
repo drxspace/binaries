@@ -8,8 +8,16 @@
 #                                    /_/           drxspace@gmail.com
 #
 
-#if [[ $EUID -ne 0 ]]; then
-#	exec $(which sudo) $0
-#fi
+#	-y, --refresh
+#	Passing two --refresh or -y flags will
+#	force a refresh of all package databases, even if they appear to be up-to-date.
 
-yaourt -Syyyyuua
+#	-u, --sysupgrade
+#	Pass this option twice to enable package downgrades; in this case, pacman will select sync packages
+#	whose versions do not match with the local versions. This can be useful when the user switches from a
+#	testing repository to a stable one.
+
+#	-a, --aur
+#	Also search in AUR database.
+
+yaourt -Syyuua
