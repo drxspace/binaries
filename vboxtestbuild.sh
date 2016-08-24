@@ -19,7 +19,7 @@
 }
 
 declare -a arrSiteVBlnk
-declare -a arrSiteVBver
+declare -a arrSiteVBbld
 
 InstallVirtualBox() {
 	local i=$1;
@@ -45,37 +45,39 @@ InstallVirtualBox() {
 }
 
 # Current VirtualBox version installed
-#CurrVBver=$(vboxmanage --version | tr [:alpha:] '-')
+#CurrVBbld=$(vboxmanage --version | tr [:alpha:] '-')
 [[ -x $(which vboxmanage 2>/dev/null) ]] && {
-	CurrVBver=$(vboxmanage --version | cut -d 'r' -f 2);
+	CurrVBver="$(vboxmanage --version | cut -d 'r' -f 1)";
+	CurrVBbld=$(vboxmanage --version | cut -d 'r' -f 2);
 } || {
-	CurrVBver=0; # VirtualBox is not installed ...yet
+	CurrVBver="0.0.0";
+	CurrVBbld=0; # VirtualBox is not installed ...yet
 }
 
-Build="Linux_amd64.run"
+Version="Linux_amd64.run"
 ExtPack="vbox-extpack"
 
 ## http://stackoverflow.com/a/28417633
 ## http://stackoverflow.com/a/10586169
 
 # Latest VirtualBox version now on site
-IFS=$'\n' read -r -d '' -a arrSiteVBlnk <<< "$(lynx -listonly -nonumbers -dump https://www.virtualbox.org/wiki/Testbuilds | sed -n -e /$(echo ${Build})/p -e /$(echo ${ExtPack})/p)"
+IFS=$'\n' read -r -d '' -a arrSiteVBlnk <<< "$(lynx -listonly -nonumbers -dump https://www.virtualbox.org/wiki/Testbuilds | sed -n -e /$(echo ${Version})/p -e /$(echo ${ExtPack})/p)"
 #echo "${arrSiteVBlnk[@]}" | tr [:space:] '\n'
 # How to make it greedy or non-greedy?
-#IFS=$'\n' read -r -d '' -a arrSiteVBver <<< "$(echo "${arrSiteVBlnk[@]}" | tr [:space:] '\n' | sed -n "/$(echo ${Build})/s/.[^-]*-\(.*\)-.*/\1/p")"
-IFS=$'\n' read -r -d '' -a arrSiteVBver <<< "$(echo "${arrSiteVBlnk[@]}" | tr [:space:] '\n' | sed -n "/$(echo ${Build})/s/.*-\(.*\)-.*/\1/p")"
-#echo "${arrSiteVBver[0]}, ${arrSiteVBver[1]}, ${arrSiteVBver[2]}"
+#IFS=$'\n' read -r -d '' -a arrSiteVBbld <<< "$(echo "${arrSiteVBlnk[@]}" | tr [:space:] '\n' | sed -n "/$(echo ${Version})/s/.[^-]*-\(.*\)-.*/\1/p")"
+IFS=$'\n' read -r -d '' -a arrSiteVBbld <<< "$(echo "${arrSiteVBlnk[@]}" | tr [:space:] '\n' | sed -n "/$(echo ${Version})/s/.*-\(.*\)-.*/\1/p")"
+#echo "${arrSiteVBbld[0]}, ${arrSiteVBbld[1]}, ${arrSiteVBbld[2]}"
 
 i=0
-if [ ${CurrVBver} -eq $i ]; then
+if [ ${CurrVBbld} -eq $i ]; then
 	echo -e "VirtualBox wasn't found installed.";
 	echo -e "On site latest version is this: ${arrSiteVBlnk[$i]}";
 	read -p "Do you want to continue installing it? [Y/n]: " ANS
 	[[ ${ANS:-Y} == [Yy] ]] && InstallVirtualBox $i
 else
-	while [ $i -lt ${#arrSiteVBver[@]} ]; do
-		if [ ${arrSiteVBver[$i]} -gt ${CurrVBver} ]; then
-			echo -e "A newer version from current “VirtualBox test build \e[1;31m${CurrVBver}\e[0m” was found, which is:";
+	while [ $i -lt ${#arrSiteVBbld[@]} ]; do
+		if [ ${arrSiteVBbld[$i]} -gt ${CurrVBbld} ]; then
+			echo -e "A newer version from current “\e[1;31mVirtualBox-${CurrVBver}-${CurrVBbld}\e[0m” was found, which is:";
 			echo -e "${arrSiteVBlnk[$i*2]}";
 			read -p "Do you want to continue installing? [Y/n]: " ANS
 			[[ ${ANS:-Y} == [Yy] ]] && InstallVirtualBox $i
@@ -83,7 +85,7 @@ else
 		fi;
 		: $(( i+=2 ));
 	done
-	if [ $i -ge ${#arrSiteVBver[@]} ]; then
+	if [ $i -ge ${#arrSiteVBbld[@]} ]; then
 		echo -e "No newer VirtualBox test build version was found.";
 	fi
 fi
