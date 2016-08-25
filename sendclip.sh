@@ -26,7 +26,7 @@ WrongOption=""
 AsFile=""
 
 KeysFile="$HOME/Documents/keys.txt"
-PhonesFile="$HOME/Documents/phonebook.txt"
+PhonesFile="$HOME/Documents/phones.txt"
 
 while [[ "$1" == -* ]]; do
   case $1 in
