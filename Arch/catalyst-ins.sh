@@ -11,10 +11,15 @@ set -e
 
 [[ $EUID -ne 0 ]] && exec $(which sudo) $0
 
-pacman -S catalyst-utils catalyst-libgl lib32-catalyst-utils lib32-catalyst-libgl catalyst-generator
+pacman -S --needed catalyst-utils catalyst-libgl lib32-catalyst-utils \
+  lib32-catalyst-libgl catalyst-generator catalyst-dkms
+
 catalyst_build_module
 aticonfig -f --initial
 
+systemctl enable atieventsd
+systemctl start atieventsd
 systemctl enable temp-links-catalyst
 systemctl start temp-links-catalyst
+
 systemctl daemon-reload
