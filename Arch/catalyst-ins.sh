@@ -11,11 +11,9 @@ set -e
 
 [[ $EUID -ne 0 ]] && exec $(which sudo) $0
 
-pacman -S --needed catalyst-utils catalyst-libgl catalyst-dkms
+pacman -S --needed catalyst-utils catalyst-libgl catalyst-dkms opencl-catalyst
 
-# lib32-catalyst-utils lib32-catalyst-libgl
-
-#catalyst_build_module
+# yaourt -S --needed catalyst-total
 
 aticonfig -f --initial
 
