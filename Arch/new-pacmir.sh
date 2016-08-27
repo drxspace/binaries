@@ -8,6 +8,12 @@
 #                                    /_/           drxspace@gmail.com
 #
 
+# Check to see if all needed tools are present
+[[ -x $(which wget 2>/dev/null) ]] || {
+	echo -e ":: \e[1mwget\e[0m: command not found!\nUse sudo apt-get install wget to install it" 1>&2;
+	exit 1;
+}
+
 if [[ $EUID -ne 0 ]]; then
 	exec $(which sudo) "$0"
 fi
