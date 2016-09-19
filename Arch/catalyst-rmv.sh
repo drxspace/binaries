@@ -11,4 +11,11 @@ set -e
 
 [[ $EUID -ne 0 ]] && exec $(which sudo) $0
 
-pacman -Rdd catalyst-utils catalyst-libgl lib32-catalyst-utils lib32-catalyst-libgl catalyst-generator
+systemctl disable atieventsd
+systemctl disable temp-links-catalyst
+pacman -Rdd catalyst-total
+
+pacman -S xorg-apps xorg-fonts xf86-input-evdev xf86-video-ati
+pacman -S xorg-server xorg-server-utils xorg-xinit mesa xf86-video-vesa xorg-twm xorg-xclock xterm
+
+pacman -S dkms linux linux-headers
