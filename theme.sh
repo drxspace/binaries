@@ -45,10 +45,10 @@ while [[ -n "$1" ]]; do
     -b | --disable-both)
       Disabled=$Disabled" --disable-cinnamon --disable-unity"
       ;;
-    -c | --cinnamon)
+    -c | --disable-cinnamon)
       Disabled=$Disabled" --disable-cinnamon"
       ;;
-    -u | --unity)
+    -u | --disable-unity)
       Disabled=$Disabled" --disable-unity"
       ;;
 
