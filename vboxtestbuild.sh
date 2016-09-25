@@ -33,7 +33,7 @@ InstallVirtualBox() {
 	# Request root privileges
 	echo -e "Following processes requires root user privileges.\nRequesting root access if we don't already have it...";
 	echo -e "Installing VirtualBox...";
-	sudo -v;
+	sudo -v || exit 1;
 	sudo sh /tmp/${vboxurl##*/};
 	echo -e "...to uninstall it run the commands\n\e[0;94msudo /opt/VirtualBox/uninstall.sh\e[0m\n\e[0;94msudo rm -rf /opt/VirtualBox/\e[0m";
 	[[ $(groups | grep vboxusers) ]] || {
@@ -87,6 +87,8 @@ else
 	done
 	if [ $i -ge ${#arrSiteVBbld[@]} ]; then
 		echo -e "No newer VirtualBox test build version was found.";
+		read -p "Do you want to reinstall your current “VirtualBox-${CurrVBver}-${CurrVBbld}”? [y/N]: " ANS
+		[[ ${ANS:-N} == [Yy] ]] && InstallVirtualBox ${#arrSiteVBbld[@]}-1
 	fi
 fi
 
