@@ -47,4 +47,11 @@ tar cf vmnet.tar vmnet-only
 rm -rf vmnet-only
 rm -fv vmnet.tar
 
+#_______________________________________________________________________________
+#-------------------------------------------------------------------------------
+
+echo -e "\n:: \033[1mVMware...\033[0m\n"
+vmware-modconfig --console --install-all
+
+
 exit $?
