@@ -28,7 +28,6 @@ sed -r -i -e 's/get_user_pages(_remote)*/get_user_pages_remote/g' vmmon-only/lin
 
 tar cf vmmon.tar vmmon-only
 rm -rf vmmon-only
-rm -fv vmmon.tar
 
 #_______________________________________________________________________________
 #-------------------------------------------------------------------------------
@@ -45,7 +44,6 @@ sed -i -e 's/dev->trans_start = jiffies/netif_trans_update\(dev\)/g' vmnet-only/
 
 tar cf vmnet.tar vmnet-only
 rm -rf vmnet-only
-rm -fv vmnet.tar
 
 #_______________________________________________________________________________
 #-------------------------------------------------------------------------------
