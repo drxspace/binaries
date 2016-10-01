@@ -16,6 +16,9 @@ systemctl disable temp-links-catalyst
 pacman -Rdd catalyst-total
 
 pacman -S xorg-apps xorg-fonts xf86-input-evdev xf86-video-ati
+
 pacman -S xorg-server xorg-server-utils xorg-xinit mesa xf86-video-vesa xorg-twm xorg-xclock xterm
 
 pacman -S dkms linux linux-headers
+
+#chown -R $(id -un):$(id -gn) <home dirs>
