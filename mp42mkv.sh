@@ -100,6 +100,9 @@ for f in ${FileArg}; do
 	WontConvert=true;
 	for ((k=0; k < nLANGUAGES ; k++)); do
 		[[ -f "${f%.*}".${LANGUAGES[${k},0]}.${subExtension} ]] && {
+			# Check if we have to convert subtitles file to utf-8 first
+			[[ "${LANGUAGES[${k},0]}" = "el" ]] && {
+			}
 			# Check if we must convert subtitles file to utf-8 first
 			[[ -z $(file -bi "${f%.*}".${LANGUAGES[${k},0]}.${subExtension} | grep "utf-8" 2>/dev/null) ]] && {
 				echo -e "Converting subtitle file ${f%.*}.${LANGUAGES[${k},0]}.${subExtension} to “utf-8”";

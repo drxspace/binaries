@@ -13,8 +13,8 @@
 	echo -e ":: \e[1mlynx\e[0m: command not found!\nUse \e[0;94msudo apt-get install lynx\e[0m to install it" 1>&2;
 	exit 1;
 }
-[[ -x $(which wget 2>/dev/null) ]] || {
-	echo -e ":: \e[1mwget\e[0m: command not found!\nUse \e[0;94msudo apt-get install wget\e[0m to install it" 1>&2;
+[[ -x $(which aria2c 2>/dev/null) ]] || {
+	echo -e ":: \e[1maria2c\e[0m: command not found!\nUse \e[0;94msudo apt-get install aria2\e[0m to install it" 1>&2;
 	exit 2;
 }
 
@@ -27,13 +27,14 @@ InstallVirtualBox() {
 	let i+=1; local extpurl="${arrSiteVBlnk[$i]}";
 
 	echo -e "Downloading “\e[1;32m${vboxurl##*/}\e[0m”, please wait...";
-	wget -q --show-progress --progress=bar:force -N -4 -t 1 -O /tmp/${vboxurl##*/} "${vboxurl}";
+	aria2c -x10 -j10 -d /tmp "${vboxurl}";
 	echo -e "Downloading “\e[1;32m${extpurl##*/}\e[0m”, please wait...";
-	wget -q --show-progress --progress=bar:force -N -4 -t 1 -O /tmp/${extpurl##*/} "${extpurl}";
+	aria2c -x10 -j10 -d /tmp "${extpurl}";
+	[[ $? -eq 0 ]] || exit 3;
 	# Request root privileges
 	echo -e "Following processes requires root user privileges.\nRequesting root access if we don't already have it...";
 	echo -e "Installing VirtualBox...";
-	sudo -v || exit 1;
+	sudo -v || exit 4;
 	sudo sh /tmp/${vboxurl##*/};
 	echo -e "...to uninstall it run the commands\n\e[0;94msudo /opt/VirtualBox/uninstall.sh\e[0m\n\e[0;94msudo rm -rf /opt/VirtualBox/\e[0m";
 	[[ $(groups | grep vboxusers) ]] || {
