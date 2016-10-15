@@ -100,8 +100,13 @@ for f in ${FileArg}; do
 	WontConvert=true;
 	for ((k=0; k < nLANGUAGES ; k++)); do
 		[[ -f "${f%.*}".${LANGUAGES[${k},0]}.${subExtension} ]] && {
-			# Check if we have to convert subtitles file to utf-8 first
+			# Check if we have to convert ’ to Ά in the subtitle file
 			[[ "${LANGUAGES[${k},0]}" = "el" ]] && {
+				nAlphas=$(grep -o -c -E "’[[:alpha:]]{2,}" "${f%.*}.${LANGUAGES[${k},0]}.${subExtension}")
+				[[ ${nAlphas} -gt 0 ]] && {
+					sed -i "s/’/Ά/g" "${f%.*}.${LANGUAGES[${k},0]}.${subExtension}"
+					echo -e "\e[0;94mChech process of the subtitle file found and alter “${nAlphas}” character(s)\e[0m";
+				}
 			}
 			# Check if we must convert subtitles file to utf-8 first
 			[[ -z $(file -bi "${f%.*}".${LANGUAGES[${k},0]}.${subExtension} | grep "utf-8" 2>/dev/null) ]] && {
@@ -138,7 +143,7 @@ for f in ${FileArg}; do
 	} || {
 		[[ $RetCode -eq 1 ]] && {
 			: $(( ConvWarn++ ));
-			echo -e "\e[0;94mConversion process of the movie “${f}” done with warning(s)\e[0m";
+			echo -e "\e[0;96mConversion process of the movie “${f}” done with warning(s)\e[0m";
 		} || {
 			: $(( ConvOkay++ ));
 			echo -e "\e[0;92mConversion process of the movie “${f}” done okay\e[0m";
