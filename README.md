@@ -41,20 +41,6 @@ sudo su -c '
 
 ```
 
-### Debian
-
-##### Re-enable Repositories version 2.1.0 (20160128)
-
-```bash
-sudo su -c '
-	cp -fv Ubuntu/afterdistupgrade.sh /usr/local/bin/afterdistupgrade
-	cp -fv Ubuntu/su-afterdistupgrade.sh /usr/local/bin/pkexec-afterdistupgrade
-	cp -fv Ubuntu/org.freedesktop.pkexec.run-afterdistupgrade-as-root.policy /usr/share/polkit-1/actions/
-	desktop-file-install Ubuntu/afterdistupgrade.desktop
-'
-
-```
-
 ### Arch
 
 ```bash
@@ -95,20 +81,6 @@ sudo su -c '
 	rm -fv /usr/local/bin/stoprunningVBs
 	rm -fv /usr/share/pixmaps/shutdownVBs.png
 	rm -fv /usr/share/applications/shutdown-virtualboxes.desktop
-'
-
-```
-
-### Debian
-
-##### Re-enable Repositories
-
-```bash
-sudo su -c '
-	rm -fv /usr/local/bin/afterdistupgrade
-	rm -fv /usr/local/bin/pkexec-afterdistupgrade
-	rm -fv /usr/share/polkit-1/actions/org.freedesktop.pkexec.run-afterdistupgrade-as-root.policy
-	rm -fv /usr/share/applications/afterdistupgrade.desktop
 '
 
 ```
