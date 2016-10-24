@@ -8,9 +8,41 @@
 #                                    /_/           drxspace@gmail.com
 #
 #set -x
+#set -e
+
+mp42mkvScriptName="$(basename $0)"
+
+mesg() {
+	local mesgStartOptions=""
+	local mesgEndOptions="\e[0m"
+
+	case $2 in
+	0|"")	# Generic message
+		mesgStartOptions="\e[1;33m${mp42mkvScriptName}\e[0m: "
+		;;
+	1)	# Error message
+		mesgStartOptions="\e[1;31m${mp42mkvScriptName}\e[0m: "
+		;;
+	2)	# Warning
+		mesgStartOptions="\e[1;38;5;209m${mp42mkvScriptName}\e[0m: "
+		;;
+	3)	# Information
+		mesgStartOptions="\e[1;94m${mp42mkvScriptName}\e[0m: "
+		;;
+	4)	# Success
+		mesgStartOptions="\e[1;92m${mp42mkvScriptName}\e[0m: "
+		;;
+	 *)
+		
+		;;
+	esac
+
+
+	echo -e "${mesgStartOptions}${1}${mesgEndOptions}";
+}
 
 Help() {
-	echo -e "mp42mkv: Showing help ... as always empty";
+	mesg "Showing help ... as always empty";
 	exit 20;
 }
 
@@ -18,10 +50,11 @@ Undot() {
 	echo -n "${1//./ }";
 }
 
-ConvTried=0
-ConvError=0
-ConvWarn=0
-ConvOkay=0
+BoxTried=0
+BoxError=0
+BoxWarn=0
+BoxOkay=0
+FileArg=""
 WrongOption=""
 yes=false
 no=false
@@ -71,11 +104,11 @@ done
 
 # Check for option error
 if [[ "$WrongOption" != "" ]]; then
-	echo -e "mp42mkv: invalid option -- $WrongOption\nTry “mp42mkv -h” for more information.";
+	mesg "Invalid option -- $WrongOption\nTry “mp42mkv -h” for more information" 2;
 	exit 10;
 fi
 if $yes && $no; then
-	echo -e "mp42mkv: invalid option coexistence\nTry “mp42mkv -h” for more information.";
+	mesg "Invalid option coexistence\nTry “mp42mkv -h” for more information" 2;
 	exit 11;
 fi
 if [[ "$@" == "" ]]; then
@@ -83,7 +116,7 @@ if [[ "$@" == "" ]]; then
 elif [[ -f "$@" ]]; then
 	FileArg="$@";
 else
-	echo -e "mp42mkv: invalid filename “$@”";
+	mesg "Invalid filename “$@”" 2;
 	exit 12;
 fi
 
@@ -97,16 +130,16 @@ for f in ${FileArg}; do
 
 	LANGSPARAMS=""
 	# We won't convert if no proper subtitle file(s) found for the current movie
-	WontConvert=true;
+	WontBoxed=true;
 	for ((k=0; k < nLANGUAGES ; k++)); do
 		[[ -f "${f%.*}".${LANGUAGES[${k},0]}.${subExtension} ]] && {
 			# Check if we must convert subtitles file to utf-8 first
 			[[ -z $(file -bi "${f%.*}".${LANGUAGES[${k},0]}.${subExtension} | grep "utf-8" 2>/dev/null) ]] && {
-				echo -e "\e[0;97mConverting subtitle file ${f%.*}.${LANGUAGES[${k},0]}.${subExtension} to “utf-8”\e[0m";
+				mesg "Converting subtitle file ${f%.*}.${LANGUAGES[${k},0]}.${subExtension} to “utf-8”" 3;
 				mv "${f%.*}".${LANGUAGES[${k},0]}.${subExtension} "${f%.*}".${LANGUAGES[${k},0]}.${subExtension}.tmp;
 				iconv -f ${LANGUAGES[${k},3]} -t UTF8 -o "${f%.*}".${LANGUAGES[${k},0]}.${subExtension} "${f%.*}".${LANGUAGES[${k},0]}.${subExtension}.tmp || {
 					mv "${f%.*}".${LANGUAGES[${k},0]}.${subExtension}.tmp "${f%.*}".${LANGUAGES[${k},0]}.${subExtension};
-					echo -e "\e[0;30m\e[45mProblems with the conversion process of subtitle file ${f%.*}.${LANGUAGES[${k},0]}.${subExtension} to “utf-8”\e[0m";
+					mesg "Problems with the conversion process of subtitle file ${f%.*}.${LANGUAGES[${k},0]}.${subExtension} to “utf-8”" 1;
 					continue;
 				}
 			}
@@ -115,18 +148,18 @@ for f in ${FileArg}; do
 				nAlphas=$(grep -o -c -E "’[[:alpha:]]{2,}" "${f%.*}.${LANGUAGES[${k},0]}.${subExtension}")
 				[[ ${nAlphas} -gt 0 ]] && {
 					sed -i "s/’/Ά/g" "${f%.*}.${LANGUAGES[${k},0]}.${subExtension}"
-					echo -e "\e[0;94mChech process of the subtitle file found and alter ${nAlphas} “’” character(s)\e[0m";
+					mesg "Chech process of the subtitle file found and alter ${nAlphas} “’” character(s)" 4;
 				}
 			}
-			WontConvert=false;
+			WontBoxed=false;
 			LANGSPARAMS=${LANGSPARAMS}"--sub-charset\n0:UTF-8\n--language\n0:${LANGUAGES[${k},1]}\n--track-name\n0:${LANGUAGES[${k},2]}\n(\n""${f%.*}.${LANGUAGES[${k},0]}.${subExtension}""\n)\n";
 			# Cleaning
 			rm -f "${f%.*}".${LANGUAGES[${k},0]}.${subExtension}.tmp;
 		}
 	done
 
-	$WontConvert && {
-		echo -e "\e[1;33m\e[41mSubtitle file(s) not found or not defined for the movie “${f}”\e[0m";
+	$WontBoxed && {
+		mesg "Subtitle file(s) not found or not defined for the movie “${f}”" 1;
 		continue;
 	}
 
@@ -136,35 +169,35 @@ for f in ${FileArg}; do
 	echo -e "${OUTPUTPARAMS}${INPUTPARAMS}${LANGSPARAMS}${MOVIETITLE}${TRACKORDER}" | \
 	sed -e 's/\\/\\\\/g' -e 's/ /\\s/g' -e 's/\"/\\2/g' -e 's/\:/\\c/g' -e 's/\#/\\h/g' > /tmp/mkvoptionsfile
 
-	"$(which mkvmerge)" @/tmp/mkvoptionsfile ; RetCode=$?
-	: $(( ConvTried++ ));
+	"$(which mkvmerge)" @/tmp/mkvoptionsfile 2>/dev/null; RetCode=$?
+	: $(( BoxTried++ ));
 
 	[[ $RetCode -gt 1 ]] && {
-		: $(( ConvError++ ));
-		echo -e "\e[1;33m\e[41mProblems with the conversion process of the movie “${f}”\e[0m";
+		: $(( BoxError++ ));
+		mesg "Problems with the packaging process of the movie “${f}”" 1;
 	} || {
 		[[ $RetCode -eq 1 ]] && {
-			: $(( ConvWarn++ ));
-			echo -e "\e[0;96mConversion process of the movie “${f}” done with warning(s)\e[0m";
+			: $(( BoxWarn++ ));
+			mesg "Packaging process of the movie “${f}” done with warning(s)" 2;
 		} || {
-			: $(( ConvOkay++ ));
-			echo -e "\e[0;92mConversion process of the movie “${f}” done okay\e[0m";
+			: $(( BoxOkay++ ));
+			mesg "Packaging process of the movie “${f}” done okay" 4;
 		}
-		{ $yes || $no; } || read -p "Do you want to delete the converted files? [Y/n]: " ANS;
-		[[ ${ANS:-Y} == [Yy] ]] && { $no || rm -vf "${f%.*}"*.{avi,mp4,${subExtension}}; }
+		{ $yes || $no; } || read -p "Do you want to delete the packaged files? [Y/n]: " ANS;
+		[[ ${ANS:-Y} == [Yy] ]] && { $no || mesg "Cleaning packade files" 3; rm -fv "${f%.*}"*.{avi,mp4,${subExtension}}; }
 	}
 done
 
-if [[ $ConvTried -gt 0 ]]; then
-	rm -f /tmp/mkvoptionsfile
-	echo -e "--
-All conversion processes have finished.
-Tried $ConvTried movie(s).
-$(( ConvWarn + ConvOkay )) movie(s) converted to MKV.
-$ConvWarn movie(s) gave warning(s) and $ConvOkay done just fine.";
-	[[ $ConvError -gt 0 ]] && echo -e "$ConvError movie(s) aborted.";
+if [[ $BoxTried -gt 0 ]]; then
+	mesg "Cleaning garbages" 3
+	rm -fv /tmp/mkvoptionsfile 2>/dev/null;
+	mesg "All packaging processes have finished
+Tried $BoxTried movie(s)
+$(( BoxWarn + BoxOkay )) movie(s) packaged to MKV
+$BoxWarn movie(s) gave warning(s) and $BoxOkay done just fine";
+	[[ $BoxError -gt 0 ]] && mesg "$BoxError movie(s) aborted" 1;
 else
-	echo -e "mp42mkv: No AVI nor MP4 file found to convert.";
+	mesg "None relevant file found to be packaged";
 	exit 1;
 fi
 
