@@ -104,24 +104,24 @@ for f in ${FileArg}; do
 			[[ -z $(file -bi "${f%.*}".${LANGUAGES[${k},0]}.${subExtension} | grep "utf-8" 2>/dev/null) ]] && {
 				echo -e "\e[0;97mConverting subtitle file ${f%.*}.${LANGUAGES[${k},0]}.${subExtension} to “utf-8”\e[0m";
 				mv "${f%.*}".${LANGUAGES[${k},0]}.${subExtension} "${f%.*}".${LANGUAGES[${k},0]}.${subExtension}.tmp;
-				iconv -f ${LANGUAGES[${k},3]} -t UTF8 -o "${f%.*}".${LANGUAGES[${k},0]}.${subExtension} "${f%.*}".${LANGUAGES[${k},0]}.${subExtension}.tmp && {
-					# Check if we have to convert ’ to Ά in the subtitle file
-					[[ "${LANGUAGES[${k},0]}" = "el" ]] && {
-						nAlphas=$(grep -o -c -E "’[[:alpha:]]{2,}" "${f%.*}.${LANGUAGES[${k},0]}.${subExtension}")
-						[[ ${nAlphas} -gt 0 ]] && {
-							sed -i "s/’/Ά/g" "${f%.*}.${LANGUAGES[${k},0]}.${subExtension}"
-							echo -e "\e[0;94mChech process of the subtitle file found and alter ${nAlphas} “’” character(s)\e[0m";
-						}
-					}
-					rm -f "${f%.*}".${LANGUAGES[${k},0]}.${subExtension}.tmp;
-				} || {
+				iconv -f ${LANGUAGES[${k},3]} -t UTF8 -o "${f%.*}".${LANGUAGES[${k},0]}.${subExtension} "${f%.*}".${LANGUAGES[${k},0]}.${subExtension}.tmp || {
 					mv "${f%.*}".${LANGUAGES[${k},0]}.${subExtension}.tmp "${f%.*}".${LANGUAGES[${k},0]}.${subExtension};
 					echo -e "\e[0;30m\e[45mProblems with the conversion process of subtitle file ${f%.*}.${LANGUAGES[${k},0]}.${subExtension} to “utf-8”\e[0m";
 					continue;
 				}
 			}
+			# Check if we have to convert ’ to Ά in the subtitle file
+			[[ "${LANGUAGES[${k},0]}" = "el" ]] && {
+				nAlphas=$(grep -o -c -E "’[[:alpha:]]{2,}" "${f%.*}.${LANGUAGES[${k},0]}.${subExtension}")
+				[[ ${nAlphas} -gt 0 ]] && {
+					sed -i "s/’/Ά/g" "${f%.*}.${LANGUAGES[${k},0]}.${subExtension}"
+					echo -e "\e[0;94mChech process of the subtitle file found and alter ${nAlphas} “’” character(s)\e[0m";
+				}
+			}
 			WontConvert=false;
 			LANGSPARAMS=${LANGSPARAMS}"--sub-charset\n0:UTF-8\n--language\n0:${LANGUAGES[${k},1]}\n--track-name\n0:${LANGUAGES[${k},2]}\n(\n""${f%.*}.${LANGUAGES[${k},0]}.${subExtension}""\n)\n";
+			# Cleaning
+			rm -f "${f%.*}".${LANGUAGES[${k},0]}.${subExtension}.tmp;
 		}
 	done
 
