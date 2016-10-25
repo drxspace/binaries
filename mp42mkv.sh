@@ -10,7 +10,7 @@
 #set -x
 #set -e
 
-mp42mkvScriptName="$(basename $0)"
+scriptName="$(basename $0)"
 
 mesg() {
 	local mesgStartOptions=""
@@ -18,22 +18,21 @@ mesg() {
 
 	case $2 in
 	0|"")	# Generic message
-		mesgStartOptions="\e[1;33m${mp42mkvScriptName}\e[0m: "
+		mesgStartOptions="\e[1;33m${scriptName}\e[0m: \e[94m"
 		;;
 	1)	# Error message
-		mesgStartOptions="\e[1;31m${mp42mkvScriptName}\e[0m: "
+		mesgStartOptions="\e[1;31m${scriptName}\e[0m: \e[91m"
 		;;
 	2)	# Warning
-		mesgStartOptions="\e[1;38;5;209m${mp42mkvScriptName}\e[0m: "
+		mesgStartOptions="\e[1;38;5;209m${scriptName}\e[0m: \e[93m"
 		;;
 	3)	# Information
-		mesgStartOptions="\e[1;94m${mp42mkvScriptName}\e[0m: "
+		mesgStartOptions="\e[1;94m${scriptName}\e[0m: \e[94m"
 		;;
 	4)	# Success
-		mesgStartOptions="\e[1;92m${mp42mkvScriptName}\e[0m: "
+		mesgStartOptions="\e[1;92m${scriptName}\e[0m: \e[32m"
 		;;
 	 *)
-		
 		;;
 	esac
 
@@ -104,11 +103,11 @@ done
 
 # Check for option error
 if [[ "$WrongOption" != "" ]]; then
-	mesg "Invalid option -- $WrongOption\nTry “mp42mkv -h” for more information" 2;
+	mesg "Invalid option -- $WrongOption\nTry “${scriptName} -h” for more information" 2;
 	exit 10;
 fi
 if $yes && $no; then
-	mesg "Invalid option coexistence\nTry “mp42mkv -h” for more information" 2;
+	mesg "Invalid option coexistence\nTry “${scriptName} -h” for more information" 2;
 	exit 11;
 fi
 if [[ "$@" == "" ]]; then
@@ -184,7 +183,7 @@ for f in ${FileArg}; do
 			mesg "Packaging process of the movie “${f}” done okay" 4;
 		}
 		{ $yes || $no; } || read -p "Do you want to delete the packaged files? [Y/n]: " ANS;
-		[[ ${ANS:-Y} == [Yy] ]] && { $no || mesg "Cleaning packade files" 3; rm -fv "${f%.*}"*.{avi,mp4,${subExtension}}; }
+		[[ ${ANS:-Y} == [Yy] ]] && { $no || mesg "Cleaning packed files" 3; rm -fv "${f%.*}"*.{avi,mp4,${subExtension}}; }
 	}
 done
 
