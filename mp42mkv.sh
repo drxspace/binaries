@@ -182,7 +182,7 @@ for f in ${FileArg}; do
 			: $(( BoxOkay++ ));
 			mesg "Packaging process of the movie “${f}” done okay" 4;
 		}
-		{ $yes || $no; } || read -p "Do you want to delete the packaged files? [Y/n]: " ANS;
+		{ $yes || $no; } || read -p "Do you want to delete the packaged files? [Y/n] " ANS;
 		[[ ${ANS:-Y} == [Yy] ]] && { $no || mesg "Cleaning packed files" 3; rm -fv "${f%.*}"*.{avi,mp4,${subExtension}}; }
 	}
 done

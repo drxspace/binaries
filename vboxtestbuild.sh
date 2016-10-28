@@ -73,14 +73,14 @@ i=0
 if [ ${CurrVBbld} -eq $i ]; then
 	echo -e "VirtualBox wasn't found installed.";
 	echo -e "On site latest version is this: ${arrSiteVBlnk[$i]}";
-	read -p "Do you want to continue installing it? [Y/n]: " ANS
+	read -p "Do you want to continue installing it? [Y/n] " ANS
 	[[ ${ANS:-Y} == [Yy] ]] && InstallVirtualBox $i
 else
 	while [ $i -lt ${#arrSiteVBbld[@]} ]; do
 		if [ ${arrSiteVBbld[$i]} -gt ${CurrVBbld} ]; then
 			echo -e "A newer version from current “\e[1;31mVirtualBox-${CurrVBver}-${CurrVBbld}\e[0m” was found, which is:";
 			echo -e "${arrSiteVBlnk[$i*2]}";
-			read -p "Do you want to continue installing? [Y/n]: " ANS
+			read -p "Do you want to continue installing? [Y/n] " ANS
 			[[ ${ANS:-Y} == [Yy] ]] && InstallVirtualBox $i
 			break;
 		fi;
@@ -88,7 +88,7 @@ else
 	done
 	if [ $i -ge ${#arrSiteVBbld[@]} ]; then
 		echo -e "No newer VirtualBox test build version was found.";
-		read -p "Do you want to reinstall your current “VirtualBox-${CurrVBver}-${CurrVBbld}”? [y/N]: " ANS
+		read -p "Do you want to reinstall your current “VirtualBox-${CurrVBver}-${CurrVBbld}”? [y/N] " ANS
 		[[ ${ANS:-N} == [Yy] ]] && InstallVirtualBox ${#arrSiteVBbld[@]}-1
 	fi
 fi
