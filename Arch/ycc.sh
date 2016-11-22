@@ -9,7 +9,7 @@
 #
 
 if [[ $EUID -ne 0 ]]; then
-	exec $(which sudo) "$0"
+	exec $(which sudo) "$0" || exit 1
 fi
 
 if [[ -d /var/lib/pacman/sync ]]; then

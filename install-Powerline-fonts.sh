@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 if [[ $EUID -ne 0 ]]; then
-	exec $(which sudo) "$0" || exit1
+	exec $(which sudo) "$0" || exit 1
 fi
 cd "$( dirname "$0" )"
 
