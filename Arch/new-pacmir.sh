@@ -19,7 +19,7 @@ if [[ $EUID -ne 0 ]]; then
 fi
 
 # List of countries with Arch Linux repository mirrorlists that we want to participate to the rank
-declare -a COUNTRIES=("GB" "DE" "FR" "GR" "RO" "IT")
+declare -a COUNTRIES=("GR" "RO" "GB" "DE" "FR" "IT")
 
 # Download the Arch Linux repository mirrorlist
 echo -en "\e[1;34m::\e[0;34m Downloading the Arch Linux repository mirrorlist. Please wait..."
