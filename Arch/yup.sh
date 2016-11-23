@@ -98,9 +98,7 @@ if $UpgOpt; then
 fi
 
 if $Purge; then
-	echo -e "\n:: \033[1mCleaning ALL files from cache, unused repositories and sync repositories databases\033[0m"
-	mesg "Requesting root access in case of we don't already have it..." 3
-	sudo -v || exit 1
+	echo -e "\n:: \033[1mCleaning ALL files from cache, unused and sync repositories databases\033[0m"
 
 	if [[ -d /var/lib/pacman/sync ]]; then
 		if [[ -n $(pacman --color always -Qqdt) ]]; then sudo pacman --color always -Rs $(pacman -Qqdt); fi
