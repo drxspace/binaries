@@ -26,6 +26,6 @@ if [[ -d /var/lib/pacman/sync ]]; then
 	[[ ${ANS:-N} == [Yy] ]] && {
 		echo "removing all sync repositories..."
 		rm -rfv /var/lib/pacman/sync
-		echo -e "\e[93mRepositories databases don't exist anmore. You may have to REFRESH them.\e[0m"
+		echo -e "\e[93mRepositories databases don't exist anymore. You may have to REFRESH them.\e[0m"
 	}
 fi
