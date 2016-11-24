@@ -18,7 +18,7 @@ if [[ -d /var/lib/pacman/sync ]]; then
 	#	Use one --clean switch to only remove packages that are no
 	#	longer installed; use two to remove all files from the cache. In both cases, you will have a yes or no
 	#	option to remove packages and/or unused downloaded databases.
-	pacman -Scc
+	pacman --color always -Scc
 
 	echo -e "\nPacman sync repositories directory: /var/lib/pacman/sync"
 	echo -en ":: \033[1mDo you want to remove ALL the sync repositories databases? [y/N] \033[0m"
@@ -26,6 +26,6 @@ if [[ -d /var/lib/pacman/sync ]]; then
 	[[ ${ANS:-N} == [Yy] ]] && {
 		echo "removing all sync repositories..."
 		rm -rfv /var/lib/pacman/sync
-		mesg "Repositories databases don't exist anmore. You may have to REFRESH them." 2
+		echo -e "\e[93mRepositories databases don't exist anmore. You may have to REFRESH them.\e[0m"
 	}
 fi
