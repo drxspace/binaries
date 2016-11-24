@@ -12,9 +12,16 @@
 
 ScriptName="$(basename $0)"
 
+Mirrors=false
 Purge=false
 UpgOpt=false
+
 WrongOption=""
+
+ReflectorCountry='Germany'
+nReflectorMirrors=6
+nReflectorMirrorsAge=24
+nReflectorThreads=4
 
 msg() {
 	local msgStartOptions=""
@@ -49,9 +56,10 @@ ShowHelp() {
 	echo "Usage: ${0##*/} [-h | --help] [-o | --upg-opt] [-p | --purge]" >&2
 	echo
 	echo "Options:"
-	echo -e "  -h, --help\tPrint this help text and exit ;)"
-	echo -e "  -o, --upg-opt\tCleaning, Upgrading and Optimizing pacman databases"
-	echo -e "  -p, --purge\tCleaning ALL files from cache, unused and sync repositories databases"
+	echo -e "  -h, --help\tprint this help text and exit ;)"
+	echo -e "  -m, --mirrors\tretrieve and filter a list of the latest Arch Linux mirrors first"
+	echo -e "  -p, --purge\tclean ALL files from cache, unused and sync repositories databases also"
+	echo -e "  -u, --upg-opt\tclean, upgrade and optimize pacman databases also"
 	exit 20;
 }
 
@@ -63,12 +71,16 @@ while [[ "$1" == -* ]]; do
 			ShowHelp
 			;;
 
-		-o | --upg-opt)
-			UpgOpt=true
+		-m | --mirrors)
+			Mirrors=true
 			;;
 
 		-p | --purge)
 			Purge=true
+			;;
+
+		-u | --upg-opt)
+			UpgOpt=true
 			;;
 
 		 *)
@@ -84,6 +96,22 @@ if [[ "$WrongOption" != "" ]]; then
 	exit 10;
 fi
 
+if $Mirrors; then
+	if [ -x $(which reflector &>/dev/null) ]; then
+		sudo -v || exit 1
+		echo -e "\n:: \033[1mRetrieving and Filtering a list of the latest Arch Linux mirrors\033[0m"
+		sudo $(which reflector) --country ${ReflectorCountry} --latest ${nReflectorMirrors} --age ${nReflectorMirrorsAge} --fastest ${nReflectorMirrors} --threads ${nReflectorThreads} --sort rate --save /etc/pacman.d/mirrorlist
+		echo -e "\n\e[0;94m\e[40m"
+		cat /etc/pacman.d/mirrorlist
+		echo -e "\e[0;100m\e[0;91m"
+		sudo rm -fv /etc/pacman.d/mirrorlist.*
+		echo -e "\e[0m"
+	else
+		msg "\e[1mreflector\e[0m: command not found! Use \e[1msudo pacman -S reflector\e[0m to install it\n" 2;
+	fi
+
+fi
+
 # -y, --refresh
 #	Passing two --refresh or -y flags will
 #	force a refresh of all package databases, even if they appear to be up-to-date.
@@ -96,14 +124,16 @@ fi
 yaourt --color -Syyuua
 
 if $UpgOpt; then
-	echo -en "\n:: \033[1mCleaning, Upgrading and Optimizing pacman databases\033[0m"
+	echo -e "\n:: \033[1mCleaning, Upgrading and Optimizing pacman databases\033[0m"
+
 	sudo pacman --color always -Scc --noconfirm
 	sudo  pacman-db-upgrade
 	sudo pacman-optimize && sudo sync
 fi
 
 if $Purge; then
-	echo -en "\n:: \033[1mCleaning ALL files from cache, unused and sync repositories databases\033[0m"
+	echo -e "\n:: \033[1mCleaning ALL files from cache, unused and sync repositories databases\033[0m"
+
 	if [[ -d /var/lib/pacman/sync ]]; then
 		if [[ -n $(pacman --color always -Qqdt) ]]; then sudo pacman --color always -Rs $(pacman -Qqdt); fi
 		# -c, --clean
