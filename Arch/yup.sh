@@ -13,8 +13,8 @@
 ScriptName="$(basename $0)"
 
 Mirrors=false
+Optimize=false
 Purge=false
-UpgOpt=false
 
 WrongOption=""
 
@@ -43,7 +43,8 @@ msg() {
 		4)	# Success
 			msgStartOptions="\e[1;92m${ScriptName}\e[0m: \e[32m"
 			;;
-		 *)
+		*)	# Fallback to Generic message
+			msgStartOptions="\e[1;33m${ScriptName}\e[0m: \e[94m"
 			;;
 	esac
 
@@ -53,15 +54,16 @@ msg() {
 ShowHelp() {
 	echo "${ScriptName} - Package manager helper utility" >&2
 	echo
-	echo "Usage: ${0##*/} [-h | --help] [-o | --upg-opt] [-p | --purge]" >&2
+	echo "Usage: ${0##*/} [-h | --help] [-m | --mirrors] [-o | --optimize] [-p | --purge]" >&2
 	echo
 	echo "Options:"
-	echo -e "  -h, --help\tprint this help text and exit ;)"
-	echo -e "  -m, --mirrors\tretrieve and filter a list of the latest Arch Linux mirrors first"
-	echo -e "  -p, --purge\tclean ALL files from cache, unused and sync repositories databases also"
-	echo -e "  -u, --upg-opt\tclean, upgrade and optimize pacman databases also"
+	echo -e "  -h, --help\t\tprint this help text and exit ;)"
+	echo -e "  -m, --mirrors\t\tretrieve and filter a list of the latest Arch Linux mirrors first"
+	echo -e "  -o, --optimize\tclean, upgrade and optimize pacman databases also"
+	echo -e "  -p, --purge\t\tclean ALL files from cache, unused and sync repositories databases also"
 	exit 20;
 }
+
 
 
 
@@ -75,12 +77,12 @@ while [[ "$1" == -* ]]; do
 			Mirrors=true
 			;;
 
-		-p | --purge)
-			Purge=true
+		-o | --optimize)
+			Optimize=true
 			;;
 
-		-u | --upg-opt)
-			UpgOpt=true
+		-p | --purge)
+			Purge=true
 			;;
 
 		 *)
@@ -90,26 +92,33 @@ while [[ "$1" == -* ]]; do
 	shift
 done
 
-# Check for option error
-if [[ "$WrongOption" != "" ]]; then
-	msg "Invalid option -- ${WrongOption}. Try “${ScriptName} -h” for more information" 2;
+# Check options for error
+if [[ "$WrongOption" != "" ]] || [[ -n "$1" ]]; then
+	msg "Invalid option. Try “${ScriptName} -h” for more information" 2;
 	exit 10;
 fi
 
+if ! hash yaourt &>/dev/null; then
+	msg "\e[1myaourt\e[0m: command not found! See https://archlinux.fr/yaourt-en on how to install it" 2;
+	exit 1;
+fi
+
+# Grant root privileges
+sudo -v || exit 2
+
 if $Mirrors; then
-	if [ -x $(which reflector &>/dev/null) ]; then
-		sudo -v || exit 1
-		echo -e "\n:: \033[1mRetrieving and Filtering a list of the latest Arch Linux mirrors\033[0m"
+	if ! hash reflector &>/dev/null; then
+		msg "\e[1mreflector\e[0m: command not found! Use \e[1msudo pacman -S reflector\e[0m to install it" 2;
+	else
+		echo -e ":: \033[1mRetrieving and Filtering a list of the latest Arch Linux mirrors...\033[0m"
+
 		sudo $(which reflector) --country ${ReflectorCountry} --latest ${nReflectorMirrors} --age ${nReflectorMirrorsAge} --fastest ${nReflectorMirrors} --threads ${nReflectorThreads} --sort rate --save /etc/pacman.d/mirrorlist
 		echo -e "\n\e[0;94m\e[40m"
 		cat /etc/pacman.d/mirrorlist
 		echo -e "\e[0;100m\e[0;91m"
 		sudo rm -fv /etc/pacman.d/mirrorlist.*
 		echo -e "\e[0m"
-	else
-		msg "\e[1mreflector\e[0m: command not found! Use \e[1msudo pacman -S reflector\e[0m to install it\n" 2;
 	fi
-
 fi
 
 # -y, --refresh
@@ -123,16 +132,16 @@ fi
 #	Also search in AUR database.
 yaourt --color -Syyuua
 
-if $UpgOpt; then
-	echo -e "\n:: \033[1mCleaning, Upgrading and Optimizing pacman databases\033[0m"
+if $Optimize; then
+	echo -e "\n:: \033[1mCleaning, Upgrading and Optimizing pacman databases...\033[0m"
 
 	sudo pacman --color always -Scc --noconfirm
-	sudo  pacman-db-upgrade
+	sudo pacman-db-upgrade
 	sudo pacman-optimize && sudo sync
 fi
 
 if $Purge; then
-	echo -e "\n:: \033[1mCleaning ALL files from cache, unused and sync repositories databases\033[0m"
+	echo -e "\n:: \033[1mCleaning ALL files from cache, unused and sync repositories databases...\033[0m"
 
 	if [[ -d /var/lib/pacman/sync ]]; then
 		if [[ -n $(pacman --color always -Qqdt) ]]; then sudo pacman --color always -Rs $(pacman -Qqdt); fi
