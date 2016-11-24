@@ -16,35 +16,35 @@ Purge=false
 UpgOpt=false
 WrongOption=""
 
-mesg() {
-	local mesgStartOptions=""
-	local mesgEndOptions="\e[0m"
+msg() {
+	local msgStartOptions=""
+	local msgEndOptions="\e[0m"
 
 	case $2 in
 		0|"")	# Generic message
-			mesgStartOptions="\e[1;33m${ScriptName}\e[0m: \e[94m"
+			msgStartOptions="\e[1;33m${ScriptName}\e[0m: \e[94m"
 			;;
 		1)	# Error message
-			mesgStartOptions="\e[1;31m${ScriptName}\e[0m: \e[91m"
+			msgStartOptions="\e[1;31m${ScriptName}\e[0m: \e[91m"
 			;;
 		2)	# Warning
-			mesgStartOptions="\e[1;38;5;209m${ScriptName}\e[0m: \e[93m"
+			msgStartOptions="\e[1;38;5;209m${ScriptName}\e[0m: \e[93m"
 			;;
 		3)	# Information
-			mesgStartOptions="\e[1;94m${ScriptName}\e[0m: \e[94m"
+			msgStartOptions="\e[1;94m${ScriptName}\e[0m: \e[94m"
 			;;
 		4)	# Success
-			mesgStartOptions="\e[1;92m${ScriptName}\e[0m: \e[32m"
+			msgStartOptions="\e[1;92m${ScriptName}\e[0m: \e[32m"
 			;;
 		 *)
 			;;
 	esac
 
-	echo -e "${mesgStartOptions}${1}${mesgEndOptions}";
+	echo -e "${msgStartOptions}${1}${msgEndOptions}";
 }
 
 ShowHelp() {
-	echo "Package manager utility helper" >&2
+	echo "${ScriptName} - Package manager helper utility" >&2
 	echo
 	echo "Usage: ${0##*/} [-h | --help] [-o | --upg-opt] [-p | --purge]" >&2
 	echo
@@ -80,7 +80,7 @@ done
 
 # Check for option error
 if [[ "$WrongOption" != "" ]]; then
-	mesg "Invalid option -- ${WrongOption}. Try “${ScriptName} -h” for more information" 2;
+	msg "Invalid option -- ${WrongOption}. Try “${ScriptName} -h” for more information" 2;
 	exit 10;
 fi
 
@@ -96,16 +96,14 @@ fi
 yaourt --color -Syyuua
 
 if $UpgOpt; then
-	echo -e "\n:: \033[1mCleaning, Upgrading and Optimizing pacman databases\033[0m"
-
+	echo -en "\n:: \033[1mCleaning, Upgrading and Optimizing pacman databases\033[0m"
 	sudo pacman --color always -Scc --noconfirm
 	sudo  pacman-db-upgrade
 	sudo pacman-optimize && sudo sync
 fi
 
 if $Purge; then
-	echo -e "\n:: \033[1mCleaning ALL files from cache, unused and sync repositories databases\033[0m"
-
+	echo -en "\n:: \033[1mCleaning ALL files from cache, unused and sync repositories databases\033[0m"
 	if [[ -d /var/lib/pacman/sync ]]; then
 		if [[ -n $(pacman --color always -Qqdt) ]]; then sudo pacman --color always -Rs $(pacman -Qqdt); fi
 		# -c, --clean
@@ -120,7 +118,7 @@ if $Purge; then
 		[[ ${ANS:-N} == [Yy] ]] && {
 			echo "removing all sync repositories..."
 			sudo rm -rfv /var/lib/pacman/sync
-			mesg "Repositories databases don't exist anymore. You may have to REFRESH them." 2
+			msg "Repositories databases don't exist anymore. You may have to REFRESH them." 2
 		}
 	fi
 fi
