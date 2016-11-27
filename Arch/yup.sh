@@ -20,7 +20,7 @@ WrongOption=""
 
 ReflectorCountry='Germany'
 nReflectorMirrors=6
-nReflectorMirrorsAge=24
+nReflectorMirrorsAge=12
 nReflectorThreads=4
 
 msg() {
@@ -112,7 +112,7 @@ if $Mirrors; then
 	else
 		echo -e ":: \033[1mRetrieving and Filtering a list of the latest Arch Linux mirrors...\033[0m"
 
-		sudo $(which reflector) --country ${ReflectorCountry} --latest ${nReflectorMirrors} --age ${nReflectorMirrorsAge} --fastest ${nReflectorMirrors} --threads ${nReflectorThreads} --sort rate --save /etc/pacman.d/mirrorlist
+		sudo $(which reflector) --country ${ReflectorCountry} --latest ${nReflectorMirrors} --age ${nReflectorMirrorsAge} --fastest ${nReflectorMirrors} --threads ${nReflectorThreads} --protocol http --protocol https --sort rate --save /etc/pacman.d/mirrorlist
 		echo -e "\n\e[0;94m\e[40m"
 		cat /etc/pacman.d/mirrorlist
 		echo -e "\e[0;100m\e[0;91m"
