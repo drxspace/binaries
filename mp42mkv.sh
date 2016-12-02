@@ -12,36 +12,36 @@
 
 scriptName="$(basename $0)"
 
-mesg() {
-	local mesgStartOptions=""
-	local mesgEndOptions="\e[0m"
+msg() {
+	local msgStartOptions=""
+	local msgEndOptions="\e[0m"
 
 	case $2 in
 	0|"")	# Generic message
-		mesgStartOptions="\e[1;33m${scriptName}\e[0m: \e[94m"
+		msgStartOptions="\e[1;33m${scriptName}\e[0m: \e[94m"
 		;;
 	1)	# Error message
-		mesgStartOptions="\e[1;31m${scriptName}\e[0m: \e[91m"
+		msgStartOptions="\e[1;31m${scriptName}\e[0m: \e[91m"
 		;;
 	2)	# Warning
-		mesgStartOptions="\e[1;38;5;209m${scriptName}\e[0m: \e[93m"
+		msgStartOptions="\e[1;38;5;209m${scriptName}\e[0m: \e[93m"
 		;;
 	3)	# Information
-		mesgStartOptions="\e[1;94m${scriptName}\e[0m: \e[94m"
+		msgStartOptions="\e[1;94m${scriptName}\e[0m: \e[94m"
 		;;
 	4)	# Success
-		mesgStartOptions="\e[1;92m${scriptName}\e[0m: \e[32m"
+		msgStartOptions="\e[1;92m${scriptName}\e[0m: \e[32m"
 		;;
 	 *)
 		;;
 	esac
 
 
-	echo -e "${mesgStartOptions}${1}${mesgEndOptions}";
+	echo -e "${msgStartOptions}${1}${msgEndOptions}";
 }
 
 Help() {
-	mesg "Showing help ... as always empty";
+	msg "Showing help...";
 	exit 20;
 }
 
@@ -74,6 +74,7 @@ LANGUAGES[1,1]="eng"
 LANGUAGES[1,2]="English subtitles"
 LANGUAGES[1,3]="ISO-8859-1"
 
+movExtension="avi,mp4,webm"
 subExtension="srt"
 
 while [[ "$1" == -* ]]; do
@@ -103,25 +104,25 @@ done
 
 # Check for option error
 if [[ "$WrongOption" != "" ]]; then
-	mesg "Invalid option -- $WrongOption\nTry “${scriptName} -h” for more information" 2;
+	msg "Invalid option -- $WrongOption\nTry “${scriptName} -h” for more information" 2;
 	exit 10;
 fi
 if $yes && $no; then
-	mesg "Invalid option coexistence\nTry “${scriptName} -h” for more information" 2;
+	msg "Invalid option coexistence\nTry “${scriptName} -h” for more information" 2;
 	exit 11;
 fi
 if [[ "$@" == "" ]]; then
-	FileArg="$(ls *.{avi,mp4} 2>/dev/null)";
+	FileArg="$(ls *.{avi,mp4,webm} 2>/dev/null)";
 elif [[ -f "$@" ]]; then
 	FileArg="$@";
 else
-	mesg "Invalid filename “$@”" 2;
+	msg "Invalid filename “$@”" 2;
 	exit 12;
 fi
 
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 #
-# main of script
+# main
 #
 for f in ${FileArg}; do
 	OUTPUTPARAMS="--ui-language\nen_US\n--output\n${f%.*}.mkv\n"
@@ -134,11 +135,11 @@ for f in ${FileArg}; do
 		[[ -f "${f%.*}".${LANGUAGES[${k},0]}.${subExtension} ]] && {
 			# Check if we must convert subtitles file to utf-8 first
 			[[ -z $(file -bi "${f%.*}".${LANGUAGES[${k},0]}.${subExtension} | grep "utf-8" 2>/dev/null) ]] && {
-				mesg "Converting subtitle file ${f%.*}.${LANGUAGES[${k},0]}.${subExtension} to “utf-8”" 3;
+				msg "Converting subtitle file ${f%.*}.${LANGUAGES[${k},0]}.${subExtension} to “utf-8”" 3;
 				mv "${f%.*}".${LANGUAGES[${k},0]}.${subExtension} "${f%.*}".${LANGUAGES[${k},0]}.${subExtension}.tmp;
 				iconv -f ${LANGUAGES[${k},3]} -t UTF8 -o "${f%.*}".${LANGUAGES[${k},0]}.${subExtension} "${f%.*}".${LANGUAGES[${k},0]}.${subExtension}.tmp || {
 					mv "${f%.*}".${LANGUAGES[${k},0]}.${subExtension}.tmp "${f%.*}".${LANGUAGES[${k},0]}.${subExtension};
-					mesg "Problems with the conversion process of subtitle file ${f%.*}.${LANGUAGES[${k},0]}.${subExtension} to “utf-8”" 1;
+					msg "Problems with the conversion process of subtitle file ${f%.*}.${LANGUAGES[${k},0]}.${subExtension} to “utf-8”" 1;
 					continue;
 				}
 			}
@@ -147,7 +148,7 @@ for f in ${FileArg}; do
 				nAlphas=$(grep -o -c -E "’[[:alpha:]]{2,}" "${f%.*}.${LANGUAGES[${k},0]}.${subExtension}")
 				[[ ${nAlphas} -gt 0 ]] && {
 					sed -i "s/’/Ά/g" "${f%.*}.${LANGUAGES[${k},0]}.${subExtension}"
-					mesg "Chech process of the subtitle file found and alter ${nAlphas} “’” character(s)" 4;
+					msg "Chech process of the subtitle file found and alter ${nAlphas} “’” character(s)" 4;
 				}
 			}
 			WontBoxed=false;
@@ -158,7 +159,7 @@ for f in ${FileArg}; do
 	done
 
 	$WontBoxed && {
-		mesg "Subtitle file(s) not found or not defined for the movie “${f}”" 1;
+		msg "Subtitle file(s) not found or not defined for the movie “${f}” so it's excluded" 1;
 		continue;
 	}
 
@@ -173,30 +174,30 @@ for f in ${FileArg}; do
 
 	[[ $RetCode -gt 1 ]] && {
 		: $(( BoxError++ ));
-		mesg "Problems with the packaging process of the movie “${f}”" 1;
+		msg "Problems with the packaging process of the movie “${f}”" 1;
 	} || {
 		[[ $RetCode -eq 1 ]] && {
 			: $(( BoxWarn++ ));
-			mesg "Packaging process of the movie “${f}” done with warning(s)" 2;
+			msg "Packaging process of the movie “${f}” done with warning(s)" 2;
 		} || {
 			: $(( BoxOkay++ ));
-			mesg "Packaging process of the movie “${f}” done okay" 4;
+			msg "Packaging process of the movie “${f}” done okay" 4;
 		}
 		{ $yes || $no; } || read -p "Do you want to delete the packaged files? [Y/n] " ANS;
-		[[ ${ANS:-Y} == [Yy] ]] && { $no || mesg "Cleaning packed files" 3; rm -fv "${f%.*}"*.{avi,mp4,${subExtension}}; }
+		[[ ${ANS:-Y} == [Yy] ]] && { $no || { msg "Cleaning packed files" 3; rm -fv "${f%.*}"*.{avi,mp4,webm,${subExtension}}; } }
 	}
 done
 
 if [[ $BoxTried -gt 0 ]]; then
-	mesg "Cleaning garbages" 3
+	msg "Cleaning garbages" 3
 	rm -fv /tmp/mkvoptionsfile 2>/dev/null;
-	mesg "All packaging processes have finished
+	msg "All packaging processes have finished
 Tried $BoxTried movie(s)
 $(( BoxWarn + BoxOkay )) movie(s) packaged to MKV
 $BoxWarn movie(s) gave warning(s) and $BoxOkay done just fine";
-	[[ $BoxError -gt 0 ]] && mesg "$BoxError movie(s) aborted" 1;
+	[[ $BoxError -gt 0 ]] && msg "$BoxError movie(s) aborted" 1;
 else
-	mesg "None relevant file found to be packaged";
+	msg "None relevant file found to be packaged";
 	exit 1;
 fi
 
