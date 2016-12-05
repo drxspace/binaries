@@ -29,4 +29,6 @@ cd ../
 rm -rfv master.zip* fonts-master/
 echo "All Powerline fonts installed to $font_dir"
 
+read -p "Press [Enter] key to exit..."
+
 exit 0

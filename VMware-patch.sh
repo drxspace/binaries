@@ -7,15 +7,18 @@
 # \__,_/   /_/     /_/|_|  /_____/   _  .___/ /_/  |_|\____/   /_____/
 #                                    /_/           drxspace@gmail.com
 #
-#
-set -e
+#set -e
+
 #Kernel modules fail to build after Linux 4.x
 
 if [[ $EUID -ne 0 ]]; then
-	exec $(which sudo) "$0"
+	exec $(which sudo) "$0" || exit 1;
 fi
 
 cd /usr/lib/vmware/modules/source
+
+#_______________________________________________________________________________
+#-------------------------------------------------------------------------------
 
 if [[ -f vmmon.old.tar ]]; then
 	cp -fv vmmon.old.tar vmmon.tar
@@ -51,5 +54,6 @@ rm -rf vmnet-only
 echo -e "\n:: \033[1mVMware...\033[0m\n"
 vmware-modconfig --console --install-all
 
+read -p "Press [Enter] key to exit..."
 
 exit $?
