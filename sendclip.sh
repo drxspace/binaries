@@ -68,7 +68,7 @@ ret=$?
 [[ $ret -eq 1 ]] && exit 0
 
 sed -n "/${AKey}/s/^.*: //p" ${AsFile} | tr -d '\n' | xsel -ib
-notify-send "${TitleBar}" "${AKey} copied to clipboard" -i face-wink
+[[ -n ${AKey} ]] && notify-send "${TitleBar}" "${AKey} copied to clipboard" -i face-wink
 
 exit $?
 
