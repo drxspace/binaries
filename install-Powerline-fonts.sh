@@ -3,9 +3,12 @@
 if [[ $EUID -ne 0 ]]; then
 	exec $(which sudo) "$0" || exit 1
 fi
+
 cd "$( dirname "$0" )"
 
-wget -q https://github.com/powerline/fonts/archive/master.zip
+rm -rfv master.zip* fonts-master/
+
+wget https://github.com/powerline/fonts/archive/master.zip
 unzip master.zip
 cd fonts-master/
 
@@ -28,7 +31,5 @@ fi
 cd ../
 rm -rfv master.zip* fonts-master/
 echo "All Powerline fonts installed to $font_dir"
-
-read -p "Press [Enter] key to exit..."
 
 exit 0
