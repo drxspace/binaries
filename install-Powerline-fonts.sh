@@ -15,7 +15,8 @@ cd fonts-master/
 # Set source and target directories
 powerline_fonts_dir=$( pwd )
 find_command="find \"$powerline_fonts_dir\" \( -name '*.[o,t]tf' -or -name '*.pcf.gz' \) -type f -print0"
-font_dir="/usr/share/fonts/truetype/ttf-powerline"
+#font_dir="/usr/share/fonts/truetype/ttf-powerline"
+font_dir="/usr/share/fonts/TTF/ttf-powerline"
 [[ -d $font_dir ]] && rm -rf $font_dir
 mkdir -p $font_dir
 
