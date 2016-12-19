@@ -18,7 +18,7 @@ Purge=false
 
 WrongOption=""
 
-ReflectorCountry='Germany'
+ReflectorCountry='US' # reflector --list-countries
 nReflectorMirrors=6
 nReflectorMirrorsAge=12
 nReflectorThreads=4
