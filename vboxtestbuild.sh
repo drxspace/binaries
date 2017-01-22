@@ -27,9 +27,9 @@ InstallVirtualBox() {
 	let i+=1; local extpurl="${arrSiteVBlnk[$i]}";
 
 	echo -e "Downloading “\e[1;32m${vboxurl##*/}\e[0m”, please wait...";
-	aria2c --allow-overwrite --conditional-get=true --summary-interval=0 -x10 -j10 -d /tmp "${vboxurl}";
+	aria2c --allow-overwrite=true --conditional-get=true --summary-interval=0 -x10 -j10 -d /tmp "${vboxurl}";
 	echo -e "Downloading “\e[1;32m${extpurl##*/}\e[0m”, please wait...";
-	aria2c --allow-overwrite --conditional-get=true --summary-interval=0 -x10 -j10 -d /tmp "${extpurl}";
+	aria2c --allow-overwrite=true --conditional-get=true --summary-interval=0 -x10 -j10 -d /tmp "${extpurl}";
 	[[ $? -eq 0 ]] || exit 3;
 	# Request root privileges
 	echo -e "Following processes requires root user privileges.\nRequesting root access if we don't already have it...";
