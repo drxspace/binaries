@@ -144,8 +144,11 @@ sudo -v || exit 2
 if $RefreshKeys; then
 	echo -e ":: \033[1mRefreshing pacman GnuPG keys...\033[0m"
 
+	sudo pacman -S --noconfirm gnupg archlinux-keyring antergos-keyring
+	sudo rm -rf /etc/pacman.d/gnupg
+	sudo pacman-key --init
+	sudo pacman-key --populate archlinux antergos
 	sudo pacman-key --refresh-keys
-	exit $?
 fi
 
 if $Mirrors; then
