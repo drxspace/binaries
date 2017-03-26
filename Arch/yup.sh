@@ -79,7 +79,7 @@ WrongOption=""
 
 yupRC="${HOME}"/.config/yuprc
 
-createRC() {
+initiateRC() {
 	echo "# ${ScriptName} - Package manager helper utility config settings" > "${yupRC}";
 	echo "#" >> "${yupRC}";
 	echo "#" >> "${yupRC}";
@@ -92,7 +92,7 @@ if [ -f "${yupRC}" ]; then
 fi
 if [ -z "${ReflectorCountry}" ]; then
 	ReflectorCountry='DE' # DE (Denmark) is the default country code
-	createRC;
+	initiateRC;
 fi
 
 
@@ -163,10 +163,12 @@ if $RefreshKeys; then
 
 	echo -e ":: \033[1mRefreshing pacman GnuPG keys...\033[0m"
 
+	msg "~> Reinstaling needing packages..." 3
 	sudo pacman -Sy --force --noconfirm gnupg archlinux-keyring antergos-keyring
 	sudo rm -rf /etc/pacman.d/gnupg
 	sudo pacman-key --init
 	sudo pacman-key --populate archlinux antergos
+	msg "~> Refreshing keys..." 3
 	sudo pacman-key --refresh-keys
 fi
 
