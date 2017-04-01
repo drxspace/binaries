@@ -163,11 +163,16 @@ if $RefreshKeys; then
 
 	echo -e ":: \033[1mRefreshing pacman GnuPG keys...\033[0m"
 
+	Flavour="archlinux"
+	KeyRing="archlinux-keyring"
+	[[ $(yaourt  -Ssq apricity-keyring) ]] && { Flavour=${Flavour}" apricity"; KeyRing=${KeyRing}" apricity-keyring"; }
+	[[ $(yaourt  -Ssq antergos-keyring) ]] && { Flavour=${Flavour}" antergos"; KeyRing=${KeyRing}" antergos-keyring"; }
+
 	msg "~> Reinstaling needing packages..." 3
-	sudo pacman -Sy --force --noconfirm gnupg archlinux-keyring antergos-keyring
+	sudo pacman -Sy --force --noconfirm gnupg ${KeyRing}
 	sudo rm -rf /etc/pacman.d/gnupg
 	sudo pacman-key --init
-	sudo pacman-key --populate archlinux antergos
+	sudo pacman-key --populate ${Flavour}
 	msg "~> Refreshing keys..." 3
 	sudo pacman-key --refresh-keys
 fi
