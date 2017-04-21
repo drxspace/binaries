@@ -202,12 +202,12 @@ fi
 #	force a refresh of all package databases, even if they appear to be up-to-date.
 # -a, --aur
 #	Also search in AUR database.
-yaourt --color -Syya
+yaourt --color -Syy --aur --devel
 
 ### Standard Action ###
 
 #if $Update; then
-if $Update && [ $(yaourt -Qu | wc -l) -gt 0 ]; then
+if $Update && [ $(yaourt -Qu --aur | wc -l) -gt 0 ]; then
 	# Grant root privileges for these too
 	sudo -v || exit 2
 
@@ -219,7 +219,7 @@ if $Update && [ $(yaourt -Qu | wc -l) -gt 0 ]; then
 #		testing repository to a stable one.
 #	-a, --aur
 #		With -u or --sysupgrade, upgrade aur packages that are out of date.
-	yaourt --color -Suua
+	yaourt --color -Suu --aur
 fi
 
 if $Optimize; then

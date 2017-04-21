@@ -53,7 +53,7 @@ BoxTried=0
 BoxError=0
 BoxWarn=0
 BoxOkay=0
-FileArg=""
+movieFilesArray=""
 WrongOption=""
 yes=false
 no=false
@@ -112,9 +112,9 @@ if $yes && $no; then
 	exit 11;
 fi
 if [[ "$@" == "" ]]; then
-	FileArg="$(ls *.{avi,mp4,webm} 2>/dev/null)";
+	movieFilesArray="$(ls *.{avi,mp4,webm} 2>/dev/null)";
 elif [[ -f "$@" ]]; then
-	FileArg="$@";
+	movieFilesArray="$@";
 else
 	msg "Invalid filename “$@”" 2;
 	exit 12;
@@ -124,8 +124,11 @@ fi
 #
 # main
 #
-for f in ${FileArg}; do
-	OUTPUTPARAMS="--ui-language\nen_US\n--output\n${f%.*}.mkv\n"
+for f in ${movieFilesArray}; do
+	[[ -f ${f%.*}.mkv ]] && {
+		:
+	}
+	OUTPUTPARAMS="--output\n${f%.*}.mkv\n"
 	INPUTPARAMS="--language\n0:und\n--language\n1:und\n(\n${f}\n)\n"
 
 	LANGSPARAMS=""
@@ -133,6 +136,14 @@ for f in ${FileArg}; do
 	WontBoxed=true;
 	for ((k=0; k < nLANGUAGES ; k++)); do
 		[[ -f "${f%.*}".${LANGUAGES[${k},0]}.${subExtension} ]] && {
+
+			# Check if we have to convert the subtitle file from .vtt to .srt
+			[[ ${subExtension} == "vtt" ]] && {
+				#sed -e '1,3d' -e 's/\(:[0-9][0-9]\)\./\1,/g' -e '$ {/^$/d;}' "${Fullname}" | \
+				#	awk 'BEGIN{row=1} NF {print $0} !NF {if(NR>1){printf "\n"}; printf "%d\n", row; row++}' > "${Fullname%.*}.srt"
+				:
+			}
+
 			# Check if we must convert subtitles file to utf-8 first
 			[[ -z $(file -bi "${f%.*}".${LANGUAGES[${k},0]}.${subExtension} | grep "utf-8" 2>/dev/null) ]] && {
 				msg "Converting subtitle file ${f%.*}.${LANGUAGES[${k},0]}.${subExtension} to “utf-8”" 3;
@@ -147,7 +158,7 @@ for f in ${FileArg}; do
 			[[ "${LANGUAGES[${k},0]}" = "el" ]] && {
 				nAlphas=$(grep -o -c -E "’[[:alpha:]]{2,}" "${f%.*}.${LANGUAGES[${k},0]}.${subExtension}")
 				[[ ${nAlphas} -gt 0 ]] && {
-					sed -i "s/’/Ά/g" "${f%.*}.${LANGUAGES[${k},0]}.${subExtension}"
+					sed -i -e "s/’[[:blank:]]/' /g" -e "s/’/Ά/g" "${f%.*}.${LANGUAGES[${k},0]}.${subExtension}"
 					msg "Chech process of the subtitle file found and alter ${nAlphas} “’” character(s)" 4;
 				}
 			}
