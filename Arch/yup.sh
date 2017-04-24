@@ -170,7 +170,12 @@ if $RefreshKeys; then
 
 	msg "~> Reinstaling needing packages..." 3
 	sudo pacman -Sy --force --noconfirm gnupg ${KeyRing}
+	msg "~> Removing existing keys..." 3
+	sudo rm -rf /var/lib/pacman/sync
 	sudo rm -rf /etc/pacman.d/gnupg
+	msg "~> Refreshing..." 3
+	sudo pacman -Sy --force
+	msg "~> Reinitiating keys..." 3
 	sudo pacman-key --init
 	sudo pacman-key --populate ${Flavour}
 	msg "~> Refreshing keys..." 3
