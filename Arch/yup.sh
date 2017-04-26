@@ -164,21 +164,22 @@ if $RefreshKeys; then
 	echo -e ":: \033[1mRefreshing pacman GnuPG keys...\033[0m"
 
 	Flavour="archlinux"
-	KeyRing="archlinux-keyring"
-	[[ $(yaourt  -Ssq apricity-keyring) ]] && { Flavour=${Flavour}" apricity"; KeyRing=${KeyRing}" apricity-keyring"; }
-	[[ $(yaourt  -Ssq antergos-keyring) ]] && { Flavour=${Flavour}" antergos"; KeyRing=${KeyRing}" antergos-keyring"; }
+	KeyRings="archlinux-keyring"
+	[[ $(yaourt  -Ssq apricity-keyring) ]] && { Flavour=${Flavour}" apricity"; KeyRings=${KeyRings}" apricity-keyring"; }
+	[[ $(yaourt  -Ssq antergos-keyring) ]] && { Flavour=${Flavour}" antergos"; KeyRings=${KeyRings}" antergos-keyring"; }
 
 	msg "~> Reinstaling needing packages..." 3
-	sudo pacman -Sy --force --noconfirm gnupg ${KeyRing}
-	msg "~> Removing existing keys..." 3
-	sudo rm -rf /var/lib/pacman/sync
-	sudo rm -rf /etc/pacman.d/gnupg
-	msg "~> Refreshing..." 3
+	sudo pacman -Sy --force --noconfirm --quiet gnupg ${KeyRings}
+	msg "~> Removing existing trusted keys..." 3
+	sudo rm -rfv /var/lib/pacman/sync
+	sudo rm -rfv /etc/pacman.d/gnupg
+	sudo gpg --list-keys
+	msg "~> Refreshing pacman databases..." 3
 	sudo pacman -Sy --force
-	msg "~> Reinitiating keys..." 3
+	msg "~> Reinitiating pacman trusted keys..." 3
 	sudo pacman-key --init
 	sudo pacman-key --populate ${Flavour}
-	msg "~> Refreshing keys..." 3
+	msg "~> Refreshing pacman trusted keys..." 3
 	sudo pacman-key --refresh-keys
 fi
 
