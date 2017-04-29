@@ -173,14 +173,16 @@ if $RefreshKeys; then
 	msg "~> Removing existing trusted keys..." 3
 	sudo rm -rfv /var/lib/pacman/sync
 	sudo rm -rfv /etc/pacman.d/gnupg
-	sudo gpg --list-keys
-	msg "~> Refreshing pacman databases..." 3
-	sudo pacman -Sy --force
+	msg "~> Removing & recreating the local keys..." 3
+	rm -rfv ${HOME}/.gnupg
+	gpg --list-keys
 	msg "~> Reinitiating pacman trusted keys..." 3
 	sudo pacman-key --init
 	sudo pacman-key --populate ${Flavour}
 	msg "~> Refreshing pacman trusted keys..." 3
 	sudo pacman-key --refresh-keys
+	msg "~> Listing pacman's keyring..." 3
+	sudo gpg --homedir /etc/pacman.d/gnupg --list-keys
 fi
 
 if $Mirrors; then
