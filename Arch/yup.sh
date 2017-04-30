@@ -167,6 +167,7 @@ if $RefreshKeys; then
 	KeyRings="archlinux-keyring"
 	[[ $(yaourt  -Ssq apricity-keyring) ]] && { Flavour=${Flavour}" apricity"; KeyRings=${KeyRings}" apricity-keyring"; }
 	[[ $(yaourt  -Ssq antergos-keyring) ]] && { Flavour=${Flavour}" antergos"; KeyRings=${KeyRings}" antergos-keyring"; }
+	[[ $(yaourt  -Ssq manjaro-system) ]] && { Flavour=${Flavour}" manjaro"; KeyRings=${KeyRings}" manjaro-system"; }
 
 	msg "~> Reinstaling needing packages..." 3
 	sudo pacman -Sy --force --noconfirm --quiet gnupg ${KeyRings}
