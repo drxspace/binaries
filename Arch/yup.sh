@@ -193,7 +193,7 @@ fi
 
 if $Mirrors; then
 	if hash pacman-mirrors &>/dev/null; then
-		echo -e ":: \033[1mRetrieving and Filtering a list of the latest Arch Linux mirrors...\033[0m"
+		echo -e ":: \033[1mRetrieving and Filtering a list of the latest Manjaro-Arch Linux mirrors...\033[0m"
 		sudo pacman-mirrors -c Germany -m  rank
 	elif ! hash reflector &>/dev/null; then
 		msg "\e[1mreflector\e[0m: command not found! Use \e[1msudo pacman -S reflector\e[0m to install it" 2;
