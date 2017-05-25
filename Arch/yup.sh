@@ -163,23 +163,28 @@ if $RefreshKeys; then
 
 	echo -e ":: \033[1mRefreshing pacman GnuPG keys...\033[0m"
 
-	Flavour="archlinux"
+	Flavours="archlinux"
 	KeyRings="archlinux-keyring"
-	[[ $(yaourt  -Ssq apricity-keyring) ]] && { Flavour=${Flavour}" apricity"; KeyRings=${KeyRings}" apricity-keyring"; }
-	[[ $(yaourt  -Ssq antergos-keyring) ]] && { Flavour=${Flavour}" antergos"; KeyRings=${KeyRings}" antergos-keyring"; }
-	[[ $(yaourt  -Ssq manjaro-system) ]] && { Flavour=${Flavour}" manjaro"; KeyRings=${KeyRings}" manjaro-system"; }
+	[[ $(yaourt  -Ssq apricity-keyring) ]] && { Flavours=${Flavours}" apricity"; KeyRings=${KeyRings}" apricity-keyring"; }
+	[[ $(yaourt  -Ssq antergos-keyring) ]] && { Flavours=${Flavours}" antergos"; KeyRings=${KeyRings}" antergos-keyring"; }
+	[[ $(yaourt  -Ssq manjaro-keyring) ]] && { Flavours=${Flavours}" manjaro"; KeyRings=${KeyRings}" manjaro-keyring"; }
 
-	msg "~> Reinstaling needing packages..." 3
-	sudo pacman -Sy --force --noconfirm --quiet gnupg ${KeyRings}
-	msg "~> Removing existing trusted keys..." 3
-	sudo rm -rfv /var/lib/pacman/sync
-	sudo rm -rfv /etc/pacman.d/gnupg
+	msg "~> Clear out the software packages downloaded..." 3
+	sudo pacman --color always -Scc --noconfirm
 	msg "~> Removing & recreating the local keys..." 3
 	rm -rfv ${HOME}/.gnupg
 	gpg --list-keys
+	msg "~> Loading trusted certificates..." 3
+	sudo touch ${HOME}/.gnupg/dirmngr_ldapservers.conf
+	sudo dirmngr < /dev/null
+	msg "~> Removing existing trusted keys..." 3
+	sudo rm -rfv /var/lib/pacman/sync
+	sudo rm -rfv /etc/pacman.d/gnupg
 	msg "~> Reinitiating pacman trusted keys..." 3
 	sudo pacman-key --init
-	sudo pacman-key --populate ${Flavour}
+	sudo pacman-key --populate ${Flavours}
+	msg "~> Reinstaling needing packages..." 3
+	sudo pacman -Sy --force --noconfirm --quiet gnupg ${KeyRings}
 	msg "~> Refreshing pacman trusted keys..." 3
 	sudo pacman-key --refresh-keys
 	msg "~> Listing pacman's keyring..." 3
