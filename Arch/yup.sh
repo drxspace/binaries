@@ -152,44 +152,8 @@ if ! hash yaourt &>/dev/null; then
 	exit 40;
 fi
 
-
-
 # Grant root privileges
 sudo -v || exit 2
-
-if $RefreshKeys; then
-	# Grant root privileges for these too
-	sudo -v || exit 2
-
-	echo -e ":: \033[1mRefreshing pacman GnuPG keys...\033[0m"
-
-	Flavours="archlinux"
-	KeyRings="archlinux-keyring"
-	[[ $(yaourt  -Ssq apricity-keyring) ]] && { Flavours=${Flavours}" apricity"; KeyRings=${KeyRings}" apricity-keyring"; }
-	[[ $(yaourt  -Ssq antergos-keyring) ]] && { Flavours=${Flavours}" antergos"; KeyRings=${KeyRings}" antergos-keyring"; }
-	[[ $(yaourt  -Ssq manjaro-keyring) ]] && { Flavours=${Flavours}" manjaro"; KeyRings=${KeyRings}" manjaro-keyring"; }
-
-	msg "~> Clear out the software packages downloaded..." 3
-	sudo pacman --color always -Scc --noconfirm
-	msg "~> Removing & recreating the local keys..." 3
-	rm -rfv ${HOME}/.gnupg
-	gpg --list-keys
-	msg "~> Loading trusted certificates..." 3
-	sudo touch ${HOME}/.gnupg/dirmngr_ldapservers.conf
-	sudo dirmngr < /dev/null
-	msg "~> Removing existing trusted keys..." 3
-	sudo rm -rfv /var/lib/pacman/sync
-	sudo rm -rfv /etc/pacman.d/gnupg
-	msg "~> Reinitiating pacman trusted keys..." 3
-	sudo pacman-key --init
-	sudo pacman-key --populate ${Flavours}
-	msg "~> Reinstaling needing packages..." 3
-	sudo pacman -Sy --force --noconfirm --quiet gnupg ${KeyRings}
-	msg "~> Refreshing pacman trusted keys..." 3
-	sudo pacman-key --refresh-keys
-	msg "~> Listing pacman's keyring..." 3
-	sudo gpg --homedir /etc/pacman.d/gnupg --list-keys
-fi
 
 if $Mirrors; then
 	if hash pacman-mirrors &>/dev/null; then
@@ -210,18 +174,48 @@ if $Mirrors; then
 	fi
 fi
 
-### Standard Action ###
-
+### Standard Action
 # -y, --refresh
 #	Passing two --refresh or -y flags will
 #	force a refresh of all package databases, even if they appear to be up-to-date.
 # -a, --aur
 #	Also search in AUR database.
-yaourt --color -Syy --aur --devel
+yaourt --color -Syy --aur --devel # Standard Action
 
-### Standard Action ###
+if $RefreshKeys; then
+	# Grant root privileges for these too
+	sudo -v || exit 2
 
-#if $Update; then
+	echo -e ":: \033[1mRefreshing pacman GnuPG keys...\033[0m"
+
+	Flavours="archlinux"
+	KeyRings="archlinux-keyring"
+	[[ $(yaourt  -Ssq apricity-keyring) ]] && { Flavours=${Flavours}" apricity"; KeyRings=${KeyRings}" apricity-keyring"; }
+	[[ $(yaourt  -Ssq antergos-keyring) ]] && { Flavours=${Flavours}" antergos"; KeyRings=${KeyRings}" antergos-keyring"; }
+	[[ $(yaourt  -Ssq manjaro-keyring) ]] && { Flavours=${Flavours}" manjaro"; KeyRings=${KeyRings}" manjaro-keyring"; }
+
+	msg "~> Clear out the downloaded software packages..." 3
+	sudo pacman --color always -Scc --noconfirm
+	msg "~> Removing & reinitiating the local keys..." 3
+	rm -rfv ${HOME}/.gnupg
+	gpg --list-keys
+	msg "~> Loading trusted certificates..." 3
+	sudo touch ${HOME}/.gnupg/dirmngr_ldapservers.conf
+	sudo dirmngr < /dev/null
+	msg "~> Removing existing trusted keys..." 3
+	sudo rm -rfv /var/lib/pacman/sync
+	sudo rm -rfv /etc/pacman.d/gnupg
+	msg "~> Reinitiating pacman trusted keys..." 3
+	sudo pacman-key --init
+	sudo pacman-key --populate ${Flavours}
+	msg "~> Reinstaling needing packages..." 3
+	sudo pacman -Sy --force --noconfirm --quiet gnupg ${KeyRings}
+	msg "~> Refreshing pacman trusted keys..." 3
+	sudo pacman-key --refresh-keys
+	msg "~> Listing pacman's keyring..." 3
+	sudo gpg --homedir /etc/pacman.d/gnupg --list-keys
+fi
+
 if $Update && [ $(yaourt -Qu --aur | wc -l) -gt 0 ]; then
 	# Grant root privileges for these too
 	sudo -v || exit 2
