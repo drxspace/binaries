@@ -153,7 +153,7 @@ if ! hash yaourt &>/dev/null; then
 fi
 
 # Grant root privileges
-sudo -v || exit 2
+sudo -v || exit 1
 
 if $Mirrors; then
 	if hash pacman-mirrors &>/dev/null; then
@@ -162,7 +162,7 @@ if $Mirrors; then
 	elif ! hash reflector &>/dev/null; then
 		msg "\e[1mreflector\e[0m: command not found! Use \e[1msudo pacman -S reflector\e[0m to install it" 2;
 	else
-		# Grant root privileges for these too
+		# Grant root privileges
 		sudo -v || exit 2
 		echo -e ":: \033[1mRetrieving and Filtering a list of the latest Arch Linux mirrors...\033[0m"
 		sudo $(which reflector) --country ${ReflectorCountry} --latest ${nReflectorMirrors} --age ${nReflectorMirrorsAge} --fastest ${nReflectorMirrors} --threads ${nReflectorThreads} --protocol http --protocol https --sort rate --save /etc/pacman.d/mirrorlist
@@ -171,6 +171,8 @@ if $Mirrors; then
 		echo -e "\e[0;100m\e[0;91m"
 		sudo rm -fv /etc/pacman.d/mirrorlist.*
 		echo -e "\e[0m"
+		# Write any data buffered in memory out to disk
+		sudo sync
 	fi
 fi
 
@@ -183,8 +185,8 @@ fi
 yaourt --color -Syy --aur --devel # Standard Action
 
 if $RefreshKeys; then
-	# Grant root privileges for these too
-	sudo -v || exit 2
+	# Grant root privileges
+	sudo -v || exit 3
 
 	echo -e ":: \033[1mRefreshing pacman GnuPG keys...\033[0m"
 
@@ -214,11 +216,13 @@ if $RefreshKeys; then
 	sudo pacman-key --refresh-keys
 	msg "~> Listing pacman's keyring..." 3
 	sudo gpg --homedir /etc/pacman.d/gnupg --list-keys
+	# Write any data buffered in memory out to disk
+	sudo sync
 fi
 
 if $Update && [ $(yaourt -Qu --aur | wc -l) -gt 0 ]; then
-	# Grant root privileges for these too
-	sudo -v || exit 2
+	# Grant root privileges
+	sudo -v || exit 4
 
 	echo -e "\n:: \033[1mUpdating packages...\033[0m"
 
@@ -229,22 +233,26 @@ if $Update && [ $(yaourt -Qu --aur | wc -l) -gt 0 ]; then
 #	-a, --aur
 #		With -u or --sysupgrade, upgrade aur packages that are out of date.
 	yaourt --color -Suu --aur
+	# Write any data buffered in memory out to disk
+	sudo sync
 fi
 
 if $Optimize; then
-	# Grant root privileges for these too
-	sudo -v || exit 2
+	# Grant root privileges
+	sudo -v || exit 5
 
 	echo -e "\n:: \033[1mCleaning, Upgrading and Optimizing pacman databases...\033[0m"
 
 	sudo pacman --color always -Scc --noconfirm
 	sudo pacman-db-upgrade
-	sudo pacman-optimize && sudo sync
+	sudo pacman-optimize
+	# Write any data buffered in memory out to disk
+	sudo sync
 fi
 
 if $Purge; then
-	# Grant root privileges for these too
-	sudo -v || exit 2
+	# Grant root privileges
+	sudo -v || exit 6
 
 	echo -e "\n:: \033[1mCleaning ALL files from cache, unused and sync repositories databases...\033[0m"
 
