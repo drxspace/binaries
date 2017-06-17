@@ -112,7 +112,7 @@ if $yes && $no; then
 	exit 11;
 fi
 if [[ "$@" == "" ]]; then
-	movieFilesArray="$(ls *.{avi,mp4,webm} 2>/dev/null)";
+	movieFilesArray="$(ls *.{avi,m4v,mp4,webm} 2>/dev/null)";
 elif [[ -f "$@" ]]; then
 	movieFilesArray="$@";
 else
